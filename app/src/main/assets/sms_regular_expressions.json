@@ -1,0 +1,37 @@
+[
+  {
+    "keywordpattern":          "(1er\\s*cycle)|(2nd\\s*cycle)",
+    "transactiontype":         "Paiement de Frais de Scolarite",
+    "regularexpression":       "Paiement\\s+reussi\\s+de\\s+(\\w+)((\\s+\\w+)*)\\s+(LYCEE|CES|CETIC|CETIF)\\s+(\\w+\\s+)*(DE|DU|D')\\s*(\\w+)\\s*(((\\s+|\\-|\\.)\\w+)*)\\s*\\-\\s*\\d(er|nd)\\s+cycle\\s+Date\\s+(\\d{2}\\/\\d{2}\\/\\d{4}\\s+\\d{2}:\\d{2}:\\d{2})\\s+Montant\\s+(\\d+)\\s*(\\w+)\\s+Pay\\sID\\s+(\\w+)\\.\\s+Votre\\s+Pay\\s+ID\\s+est\\s+votre\\s+preuve\\s+de\\s+paiement\\."
+  },
+  {
+    "keywordpattern":          "(PROBATOIRE|BACCALAUREAT|BEPC|CAP|PROBATOIRE\\s*TECHNIQUE|BACCALAUREAT\\s*TECHNIQUE)",
+    "transactiontype":         "Paiement de Frais d'examen",
+    "regularexpression":       "Paiement\\s+reussi\\s+de\\s+(\\w+)((\\s+\\w+)*)\\s+(LYCEE|CES|CETIC|CETIF)\\s+(\\w+\\s+)*(DE|DU|D')\\s*(\\w+)\\s*(((\\s+|\\-|\\.)\\w+)*)\\s*\\-\\s*(\\w+)((\\s*\\w+)*)\\s+Date\\s+(\\d{2}\\/\\d{2}\\/\\d{4}\\s+\\d{2}:\\d{2}:\\d{2})\\s+Montant\\s+(\\d+)\\s*(\\w+)\\s+Pay\\sID\\s+(\\w+)\\.\\s+Votre\\s+Pay\\s+ID\\s+est\\s+votre\\s+preuve\\s+de\\s+paiement\\."
+  },
+  {
+    "keywordpattern":          "retrait",
+    "transactiontype":         "Retrait",
+    "regularexpression":       "Le\\s+(\\w+)\\s+de\\s+(\\d+)\\s*(\\w+)\\s+initie\\s+pour\\s+(\\w+)((\\s+\\w+)*)\\s+le\\s+(\\d{4}\\-\\d{2}\\-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})\\s+a\\s+ete\\s+approuve\\s+le\\s+(\\d{4}\\-\\d{2}\\-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})\\.\\s*Nouveau\\s+solde:\\s+(\\d+)\\s*(\\w+)"
+  },
+  {
+    "keywordpattern":          "Votre\\s+paiement\\s+de\\s+\\d+\\s*\\w+",
+    "transactiontype":         "Paiement",
+    "regularexpression":       "Votre\\s+paiement\\s+de\\s+(\\d+)\\s*(\\w+)\\s+pour\\s+(\\w+)((\\s+\\w+)*)\\s+a\\s+ete\\s+effectue\\s+le\\s+(\\d{4}\\-\\d{2}\\-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})\\s*\\.\\s+Votre\\s+nouveau\\s+solde\\s*:\\s+(\\d+)\\s*(\\w+)\\s*\\.\\s+Frais\\s*:\\s+(\\d+)\\s*(\\w+)\\s*\\,\\s+Message\\s*:\\s+(.+)\\.\\s+Transaction\\s+Id\\s*:\\s+(\\d+)\\."
+  },
+  {
+    "keywordpattern":          "Recharge\\s+de\\s+\\d+\\s*\\w+",
+    "transactiontype":         "Recharge de credit",
+    "regularexpression":       "Recharge\\s+de\\s+(\\d+)\\s*(\\w+)\\s+a\\s+(\\d+)\\s+le\\s+(\\d{4}\\-\\d{2}\\-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})\\s+effectue\\s+avec\\s+(\\w+)\\.\\s*\\w+\\s*:\\s*(\\d+)\\s*(\\w+)\\s*\\.\\s*Nouveau\\s+solde\\s*:\\s*((\\d+)(\\,\\d+)*)\\s*(\\w+)"
+  },
+  {
+    "keywordpattern":          "Vous\\s+avez\\s+envoye\\s+\\d+\\s+\\w+\\s+a",
+    "transactiontype":         "Envoi de fond",
+    "regularexpression":       "Vous\\s+avez\\s+envoye\\s+(\\d+)\\s+(\\w+)\\s+a\\s+(\\w+)((\\s+\\w+)*)\\s+\\((\\d+)\\)\\s+le\\s+(\\d{4}\\-\\d{2}\\-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2})\\.\\s*Message\\s+de\\s+l'expediteur\\s*:(.+)\\.\\s+Votre\\s+nouveau\\s+solde\\s+est\\s+de\\s*:\\s+(\\d+)\\s*(\\w+)\\.\\s+Transaction\\s+Id\\s*:\\s*(\\w+)\\."
+  },
+  {
+    "keywordpattern":          "Transfert\\s+de\\s+\\d+\\s+\\w+\\s+effectue",
+    "transactiontype":         "Transfert de fond",
+    "regularexpression":       "(\\w+)\\s+de\\s+(\\d+)\\s+(\\w+)\\s+effectue\\s+avec\\s+(\\w+)\\s+a\\s+(\\w+)((\\s+\\w+)*)\\s+\\((\\d+)\\)\\s+le\\s+(\\d{4})\\-(\\d{2})\\-(\\d{2})\\s+(\\d{2}):(\\d{2}):(\\d{2})\\.\\s+FRAIS\\s+(\\d+)\\s+\\w+\\.\\s+Transaction\\s+Id:\\s+(\\d+)\\s+(;|,)\\s+Reference:(.+)\\.\\s+Nouveau\\s+solde\\s+est:\\s+(\\d+)\\s(\\w+)\\."
+  }
+]

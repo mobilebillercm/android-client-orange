@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@android:color/white"
+	android:id="@+id/invite_user_root_view">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginRight="-50dp"
+		android:id="@+id/logo_content"
+		android:layout_marginLeft="-50dp"
+		android:gravity="center_horizontal"
+		android:paddingLeft="30dp"
+		android:paddingRight="30dp"
+		android:paddingTop="0dp"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="-50dp"
+			android:layout_marginLeft="-50dp"
+			android:gravity="center_horizontal"
+			android:paddingLeft="30dp"
+			android:paddingRight="30dp"
+			android:paddingTop="15dp"
+			android:orientation="horizontal">
+
+			<ImageView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:src="@drawable/mobilephone"
+				/>
+
+			<ImageView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:src="@drawable/bluetooth"
+				/>
+
+			<ImageView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:src="@drawable/printer"
+				/>
+		</LinearLayout>
+		<View
+			android:layout_width="fill_parent"
+			android:layout_height="1dp"
+			android:background="@color/colorPrimaryDark" />
+	</LinearLayout>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="0dp"
+		android:layout_below="@id/logo_content">
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:gravity="center"
+				android:textColor="@color/colorPrimary"
+				android:layout_marginTop="20dp"
+				android:textSize="20sp"
+				android:textStyle="bold"
+				android:id="@+id/sms_sender"
+				/>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text=""
+				android:layout_gravity="center"
+				android:gravity="center"
+				android:textColor="@color/colorPrimary"
+				android:layout_marginTop="20dp"
+				android:textSize="16sp"
+				android:textStyle="bold"
+				android:layout_below="@id/sms_sender"
+				android:id="@+id/soustitre"
+				/>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingLeft="20dp"
+				android:paddingRight="20dp"
+				android:orientation="vertical"
+				android:layout_gravity="center"
+				android:layout_below="@id/soustitre"
+				android:layout_marginBottom="50dp"
+				>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/le"
+					android:textColor="@color/colorPrimary"
+					android:textSize="14sp"
+					android:layout_marginTop="20dp"/>
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/raison"
+					android:textColor="@color/colorPrimary"
+					android:textSize="14sp"/>
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/beneficiaire"
+					android:textColor="@color/colorPrimary"
+					android:textSize="14sp"/>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/compte_bene"
+					android:textColor="@color/colorPrimary"
+					android:textSize="14sp"/>
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/fair_par"
+					android:textColor="@color/colorPrimary"
+					android:textSize="14sp"
+					android:textStyle="normal"/>
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/frais"
+					android:textColor="@color/colorPrimary"
+					android:textSize="14sp"/>
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/montant"
+					android:textColor="@color/colorPrimary"
+					android:textSize="17sp"
+					android:textStyle="bold"/>
+
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:layout_gravity="center"
+					android:gravity="center">
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/print_question"
+						android:textStyle="bold"
+						android:textSize="16sp"
+						android:textColor="@color/colorPrimary"
+						android:layout_gravity="center"
+						android:gravity="center"
+						android:layout_marginTop="30dp"/>
+					<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal"
+						android:layout_gravity="center"
+						android:gravity="center"
+						>
+						<Button
+							android:id="@+id/no_print"
+							android:layout_width="0dp"
+							android:layout_height="wrap_content"
+							android:layout_weight="1"
+							android:layout_marginTop="3dp"
+							android:background="@drawable/border_blue"
+							android:padding="3dp"
+							android:text="@string/non"
+							android:textColor="@color/colorPrimary"
+							android:textSize="16sp"
+							android:layout_marginRight="15dp"/>
+
+						<Button
+							android:id="@+id/yes_print"
+							android:layout_width="0dp"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="3dp"
+							android:layout_weight="1"
+							android:background="@drawable/border_blue"
+							android:padding="3dp"
+							android:text="@string/yes"
+							android:textColor="@color/colorPrimary"
+							android:textSize="16sp"
+							android:layout_marginLeft="15dp"/>
+						<TextView
+							android:layout_width="0dp"
+							android:layout_height="wrap_content"
+							android:layout_weight="0"
+							android:textColor="@android:color/white"
+							android:text="void"/>
+					</LinearLayout>
+					<ProgressBar
+						android:layout_width="25dp"
+						android:layout_height="25dp"
+						android:id="@+id/print_loader"
+						android:visibility="gone"/>
+					<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal"
+						android:layout_gravity="center"
+						android:gravity="center"
+						android:layout_marginTop="20dp"
+						>
+						<Button
+							android:id="@+id/back"
+							android:layout_width="0dp"
+							android:layout_height="wrap_content"
+							android:layout_weight="1"
+							android:layout_marginTop="3dp"
+							android:background="@drawable/border_blue"
+							android:padding="3dp"
+							android:text="@string/quit"
+							android:textColor="@color/colorPrimary"
+							android:textSize="16sp"
+							android:drawableLeft="@drawable/back"
+							android:layout_marginRight="50dp"
+							android:layout_marginLeft="50dp"/>
+
+
+						<TextView
+							android:layout_width="0dp"
+							android:layout_height="wrap_content"
+							android:layout_weight="0"
+							android:textColor="@android:color/white"
+							android:text="void"/>
+					</LinearLayout>
+				</LinearLayout>
+
+
+			</LinearLayout>
+
+		</RelativeLayout>
+
+
+
+	</ScrollView>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentBottom="true"
+		android:layout_margin="-5dp"
+		android:gravity="center"
+		android:background="@color/colorPrimaryDark"
+		android:paddingBottom="3dp"
+		android:paddingTop="3dp">
+		<TextView
+			android:layout_height="match_parent"
+			android:layout_width="wrap_content"
+			android:text="@string/copyright"
+			android:layout_gravity="center"
+			android:textColor="@android:color/white"
+			android:background="@color/colorPrimaryDark"
+			/>
+		<TextView
+			android:layout_height="match_parent"
+			android:layout_width="wrap_content"
+			android:text="@string/softinovplus"
+			android:layout_gravity="center"
+			android:textColor="@android:color/white"
+			android:background="@color/colorPrimaryDark"
+			android:id="@+id/softinovplus"
+			android:layout_marginLeft="5dp"
+			/>
+	</LinearLayout>
+
+</RelativeLayout>
+
+

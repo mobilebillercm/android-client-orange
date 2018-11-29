@@ -1,0 +1,109 @@
+<resources>
+    <string name="app_name">Orange Mobile Biller</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="email">E-mail</string>
+    <string name="passowrd">Mot de Passe</string>
+    <string name="login">Connexion</string>
+    <string name="show_pwd">Montrer Mot de Passe</string>
+    <string name="hide_pwd">Cacher Mot de Passe</string>
+    <string name="forgot">Mot de passe Oublie?</string>
+    <string name="closebutton">Close Button for Activity</string>
+    <string name="newUser">Pas encore Membre? S\'enregistrer ici.</string>
+    <string name="fullName">Nom Complet</string>
+    <string name="mobileNumber">Num. Tel</string>
+    <string name="location">Adresse</string>
+    <string name="confirmPassword">Confirmer Mot de Passe</string>
+    <string name="terms_conditions">En Cliquant sur S\'Enregistrer vous acceptez les termes et conditions d\'utilisation.</string>
+    <string name="signUp">S\'Enregistrer</string>
+    <string name="already_user">Deja Utilisateur? Se connecter ici.</string>
+    <string name="registered_emailid">Veuillez entrer votre E-Mail d\'enregistrement ci-dessous:</string>
+    <string name="submit">Envoyer</string>
+    <string name="back">Retourner</string>
+
+    <string name="copyright">\u00a9 2018</string>
+    <string name="softinovplus"> SOFTINOV +</string>
+    <string name="iservices">iServices</string>
+    <string name="slash"> / </string>
+    <string name="firstname">Nom</string>
+    <string name="lastname">Prenom</string>
+    <string name="entreprise">Entreprise</string>
+    <string name="entreprise_description">Description Entreprise</string>
+    <string name="passowrd_confirmation">Confirmer Mot De Passe</string>
+    <string name="logo">Logo</string>
+    <string name="telephone">Telephone</string>
+    <string name="city">Ville</string>
+    <string name="region">Region</string>
+    <string name="mobilebiller">Mobile Biller</string>
+    <string name="view_terms_conditions">Termes et conditions d\'utilisation</string>
+    <string name="reconfigure_password">Reconfigurer Mot de Passe</string>
+    <string name="send">Envoyer</string>
+    <string name="please_wait">Veuillez Patienter SVP &#8230;</string>
+    <string name="you_mustgrant_permission">Vous devez autoriser l\'application a recevoir les SMS</string>
+    <string name="header_message">Liste de messages</string>
+    <string name="show">Montrer</string>
+    <string name="footer_message">Liste de SMS</string>
+    <string name="supprimer_tout">Supprimer Tout</string>
+    <string name="deconnexion">Deconnexion</string>
+    <string name="bluetooth">bluetooths</string>
+    <string name="channel_name">Mobile Biller Chanel 1</string>
+    <string name="channel_description">Mobile Biller to print bill on mobile printer using Bluetooth on ndroid Application</string>
+    <string name="pdv_adapter">Entreprise</string>
+    <string name="username_adapter">Utilisateur</string>
+    <string name="envoye_le">Envoye le</string>
+    <string name="recu_le">Recu le</string>
+    <string name="expe">Expediteur</string>
+    <string name="message">Message</string>
+    <string name="supprimer">Supprimer</string>
+    <string name="imprimer">Imprimer</string>
+    <string name="mytransaction">Mes Transactions</string>
+    <string name="pwd_label">Mot de Passe</string>
+    <string name="pwd_hint_delete_sms">Mot de Passe</string>
+    <string name="cancel">Annuler</string>
+    <string name="OK">Supprimer</string>
+    <string name="policy_message">Politique de confidentialité de Mobile Biller</string>
+    <string name="refuser">Refuser</string>
+    <string name="accepter">Accepter</string>
+    <string name="messervices">Mes Services</string>
+    <string name="configurer_bluetoot">Configurer Bluetooth</string>
+    <string name="inviter">Inviter Un Collaborateur</string>
+    <string name="changermdp">Changer Mot De Passe</string>
+    <string name="current_password">Mot de Passe Courant</string>
+    <string name="new_password">Nouveau Mot de Passe</string>
+    <string name="new_password_confirmation">Confirmer le Nouveau mot de Passe</string>
+    <string name="change">Changer</string>
+    <string name="pwd_successfully_changed">Mot de Passe Modifie avec Succes</string>
+    <string name="failed_to_change_pwd">Echec de Modification du Mot de passe</string>
+    <string name="invite_user">Inviter un Collaborateur</string>
+    <string name="inite">Inviter</string>
+    <string name="are_you_sure">Etes Vous Sur de Vouloir vous Deconnecter?</string>
+
+    <string name="yes">Oui</string>
+    <string name="non">Non</string>
+    <string name="print_question">Imprimer?</string>
+    <string name="quit">Quitter</string>
+    <string name="recharge">Recharger Mon Compte</string>
+    <string name="mobilemoney">Mobile Money</string>
+    <string name="creditcard">Carte de Credit</string>
+    <string name="provider">Fournisseur</string>
+    <string name="phonenumber">Numero de Telphone</string>
+    <string name="holder">Titulaire</string>
+    <string name="chargement_configuration">Chargement de configurations</string>
+    <string name="taxpayernumber">Numero De Contribuable</string>
+    <string name="numbertraderegister">Numero de Registre de Commercde</string>
+
+
+    <string-array name="regions">
+        <item>Adamaoua</item>
+        <item>Centre</item>
+        <item>Est</item>
+        <item>Extreme-Nord</item>
+        <item>Littoral</item>
+        <item>Nord</item>
+        <item>Nord-Ouest</item>
+        <item>Ouest</item>
+        <item>Sud</item>
+        <item>Sud-Ouest</item>
+    </string-array>
+
+</resources>

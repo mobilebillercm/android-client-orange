@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:id="@+id/inviter"
+        android:icon="@drawable/plus"
+        android:title="@string/inviter"/>
+    <!--<item android:id="@+id/register"
+        android:icon="@drawable/register"
+        android:title="@string/signUp"/>-->
+
+    <item android:id="@+id/setprinter"
+        android:icon="@drawable/printer"
+        android:title="@string/configurer_bluetoot"/>
+
+    <item android:id="@+id/changermdp"
+        android:icon="@drawable/password_forgot"
+        android:title="@string/changermdp"/>
+
+    <item android:id="@+id/mestransactions"
+        android:icon="@drawable/transaction"
+        android:title="@string/mytransaction"/>
+
+    <item android:id="@+id/deconnexion"
+        android:icon="@drawable/logout"
+        android:title="@string/deconnexion"/>
+
+    <item android:id="@+id/recharge_my_account"
+        android:icon="@drawable/recharge"
+        android:title="@string/recharge"/>
+
+   <!-- <item android:title="Connexion"
+        android:id="@+id/se_connecter"
+        android:icon="@drawable/ic_launcher"/>
+
+    <item android:title="Enregistrer un site touristique"
+        android:id="@+id/save_touristic_site"
+        android:icon="@drawable/ic_launcher"
+        />
+
+    <item android:title="Enregistrer un Musée"
+        android:id="@+id/save_museum"
+        android:icon="@drawable/ic_launcher"/>
+
+
+
+    <item android:title="Others">
+        <menu>
+            <item
+                android:title="Spam"
+                android:icon="@drawable/ic_launcher"/>
+            <item
+                android:title="Bin"
+                android:icon="@drawable/ic_launcher"/>
+        </menu>
+    </item>
+
+    <group android:id="@+id/group_settings_id">
+
+        <item android:title="Settings"
+            android:icon="@drawable/ic_launcher"/>
+        <item android:title="Help"
+            android:icon="@drawable/ic_launcher"/>
+    </group>-->
+
+
+</menu>

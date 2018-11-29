@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="50dp"
+    android:padding="25dp">
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:src="@drawable/error"
+        android:layout_marginBottom="18dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"/>
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/result_error_single"
+        android:text=""/>
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/label_input_admin_pwd_delete_single"
+        android:text="@string/pwd_label"/>
+    <EditText 
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/edit_pwd_delete_single"
+        android:inputType="textPassword"
+        android:hint="@string/pwd_hint_delete_sms"/>
+
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <Button 
+            android:id="@+id/cancel_single"
+            android:text="@string/cancel"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
+            />
+        <Button 
+            android:id="@+id/confirm_delete_single"
+            android:text="@string/OK"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
+            />
+    </LinearLayout>
+</LinearLayout>
