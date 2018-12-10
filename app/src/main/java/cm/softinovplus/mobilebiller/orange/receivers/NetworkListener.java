@@ -75,7 +75,7 @@ public class NetworkListener extends BroadcastReceiver {
         if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)){
 
 
-            SMSDataSource smsDatatSource1 = new SMSDataSource(context);
+            /*SMSDataSource smsDatatSource1 = new SMSDataSource(context);
             smsDatatSource1.open();
             SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
 
@@ -99,7 +99,7 @@ public class NetworkListener extends BroadcastReceiver {
             editor.putLong(Utils.LAST_SMS_ID, sms1.getId());
             editor.apply();
 
-            smsDatatSource1.close();
+            smsDatatSource1.close();*/
 
 
 
