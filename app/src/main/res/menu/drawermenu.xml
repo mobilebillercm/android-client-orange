@@ -4,7 +4,12 @@
 
     <item android:id="@+id/inviter"
         android:icon="@drawable/plus"
-        android:title="@string/inviter"/>
+        android:title="@string/inviter"
+        android:visible="false"/>
+    <item android:id="@+id/create"
+        android:icon="@drawable/plus"
+        android:title="@string/create_user"
+        android:visible="false"/>
     <!--<item android:id="@+id/register"
         android:icon="@drawable/register"
         android:title="@string/signUp"/>-->

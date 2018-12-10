@@ -29,6 +29,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_RECEIVED_AT = "received_at";
 	public static final String COLUMN_IS_YET_PRINTED = "is_yet_printed";
 	public static final String COLUMN_IS_ONLINE_SAVED = "is_online_saved";
+	public static final String COLUMN_EMAIL = "email";
+	public static final String COLUMN_PHONE = "phone";
+	public static final String COLUMN_TAXPAYERNUMBER = "taxpayernumber";
+	public static final String COLUMN_NUMBERTRADEREGISTER = "numbertraderegister";
 
 	public static final String DATABASE_NAME = "sms.db";
 	public static final int DATABASE_VERSION = 1;
@@ -36,15 +40,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_CREATE = "create table " + TABLE_SMS + "(" +
             COLUMN_ID + " integer primary key, " +
             COLUMN_TRANSACTION_TYPE + " text, " +
-            COLUMN_TRANSACTION_AMOUNT + " integer, " +
+            COLUMN_TRANSACTION_AMOUNT + " real, " +
             COLUMN_TRANSACTION_BENEFICIARY_NAME + " text, " +
             COLUMN_TRANSACTION_BENEFICIARY_ACCOUNT_NUMBER + " text, " +
             COLUMN_TRANSACTION_DATE  + " text, " +
             COLUMN_TRANSACTION_ID + " text, " +
             COLUMN_TRANSACTION_REFERENCE + " text, " +
-            COLUMN_TRANSACTION_FEES + " integer, " +
+            COLUMN_TRANSACTION_FEES + " real, " +
             COLUMN_TRANSACTION_STATE + " text, " +
-            COLUMN_TRANSACTION_BALANCE + " integer, " +
+            COLUMN_TRANSACTION_BALANCE + " real, " +
             COLUMN_TRANSACTION_CURRENCY + " text, " +
 			COLUMN_TRANSACTION_MADE_BY + " text, " +
             COLUMN_SMS_SENDER + " text, " +
@@ -55,7 +59,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             COLUMN_TENANT + " text, " +
             COLUMN_RECEIVED_AT + " integer, " +
             COLUMN_IS_YET_PRINTED + " integer, " +
-			COLUMN_IS_ONLINE_SAVED + " integer" +
+			COLUMN_IS_ONLINE_SAVED + " integer, " +
+			COLUMN_EMAIL + " text, " +
+			COLUMN_PHONE + " text, " +
+			COLUMN_TAXPAYERNUMBER + " text, " +
+			COLUMN_NUMBERTRADEREGISTER + " text" +
             ")";
 
 	 public MySQLiteHelper(Context context) {

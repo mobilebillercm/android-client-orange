@@ -21,15 +21,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -52,44 +48,42 @@ import javax.net.ssl.TrustManagerFactory;
 import cm.softinovplus.mobilebiller.orange.utils.CustomToast;
 import cm.softinovplus.mobilebiller.orange.utils.Utils;
 
-public class InviteUser extends AppCompatActivity {
+public class CreateUser extends AppCompatActivity {
 
-    private TextView titre_invite_user, result_invite_user;
+    private TextView titre_create_user, result_create_user;
     private EditText edit_firtname, edit_lastname, edit_email, edit_phone, edit_city;
     private AppCompatSpinner spinner_region;
     private String selectedRegion;
     private SharedPreferences authPreferences;
 
-    private ProgressBar invite_loader;
-    private Button inviteBtn;
+    private ProgressBar create_loader;
+    private Button createBtn;
 
     private ArrayAdapter<CharSequence> adapter;
     private View invite_user_root_view;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_invite_user);
+        setContentView(R.layout.activity_create_user);
 
-        titre_invite_user = findViewById(R.id.titre_invite_user);
-        result_invite_user = findViewById(R.id.result_invite_user);
+        titre_create_user = findViewById(R.id.titre_create_user);
+        result_create_user = findViewById(R.id.result_create_user);
 
         edit_firtname = findViewById(R.id.edit_firtname);
         edit_lastname = findViewById(R.id.edit_lastname);
         edit_email = findViewById(R.id.edit_email);
         edit_phone = findViewById(R.id.edit_phone);
         edit_city = findViewById(R.id.edit_city);
-
         invite_user_root_view = findViewById(R.id.invite_user_root_view);
 
-        inviteBtn = findViewById(R.id.inviteBtn);
+        createBtn = findViewById(R.id.createBtn);
 
         authPreferences = getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
-        titre_invite_user.setText(authPreferences.getString(Utils.TENANT_NAME, ""));
+        titre_create_user.setText(authPreferences.getString(Utils.TENANT_NAME, ""));
 
         spinner_region =  findViewById(R.id.spinner_region);
-        invite_loader = findViewById(R.id.invite_loader);
+        create_loader = findViewById(R.id.create_loader);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         adapter = ArrayAdapter.createFromResource(this, R.array.regions, android.R.layout.simple_spinner_item);
@@ -100,7 +94,7 @@ public class InviteUser extends AppCompatActivity {
         selectedRegion = adapter.getItem(0).toString();
         Log.e("selectedRegion", selectedRegion);
 
-        inviteBtn.setOnClickListener(new View.OnClickListener() {
+        createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String firstname = edit_firtname.getText().toString().trim();
@@ -121,18 +115,18 @@ public class InviteUser extends AppCompatActivity {
                         || email.equals("") || email.length() == 0
                         || phone.equals("") || phone.length() == 0
                         || city.equals("") || city.length() == 0){
-                    new CustomToast().Show_Toast(InviteUser.this, invite_user_root_view, "All fields are required.");
+                    new CustomToast().Show_Toast(CreateUser.this, invite_user_root_view, "All fields are required.");
                 }// Check if email id valid or not
                 else if (!m.find()){
-                    new CustomToast().Show_Toast(InviteUser.this, invite_user_root_view, "Your Email Id is Invalid.");
+                    new CustomToast().Show_Toast(CreateUser.this, invite_user_root_view, "Your Email Id is Invalid.");
                 }// Check if both password should be equal
                 else {
 
-                    result_invite_user.setText("");
-                    DoInviteUser doInviteUser = new DoInviteUser(InviteUser.this, invite_loader,
+                    result_create_user.setText("");
+                    DoCreateUser doCreateUser = new DoCreateUser(CreateUser.this, create_loader,
                             firstname, lastname, email, phone, selectedRegion, city, authPreferences.getString(Utils.USERID,""),
                             authPreferences.getString(Utils.TENANT_ID,""), authPreferences.getString(Utils.ACCESS_TOKEN,""));
-                    doInviteUser.execute(Utils.HOST_IDENTITY_AND_ACCESS + "api/users-invitations?scope=SCOPE_MANAGE_COLLABORATORS");
+                    doCreateUser.execute(Utils.HOST_IDENTITY_AND_ACCESS + "api/users-subaccounts?scope=SCOPE_MANAGE_SUBACCOUNT_ACCESSES");
                 }
             }
         });
@@ -148,18 +142,18 @@ public class InviteUser extends AppCompatActivity {
                 selectedRegion = null;
             }
         });
-
     }
 
-    private class DoInviteUser extends AsyncTask<String, Integer, String> {
+
+    private class DoCreateUser extends AsyncTask<String, Integer, String> {
         private String token;
         private ProgressBar dialog;
         private Context context;
         private String firstname, lastname, email, phone, region, city, userid, tenantid;
         private int statusCode = 0;
 
-        public DoInviteUser(Context context, ProgressBar dialog, String firstname, String lastname, String email,
-                        String phone, String region, String city, String userid, String tenantid,String token) {
+        public DoCreateUser(Context context, ProgressBar dialog, String firstname, String lastname, String email,
+                            String phone, String region, String city, String userid, String tenantid,String token) {
             this.context = context;
             this.dialog = dialog;
             this.firstname = firstname;
@@ -284,7 +278,7 @@ public class InviteUser extends AppCompatActivity {
                     //body.put("region", this.region);
                     String query = "firstname=" + URLEncoder.encode(this.firstname, "UTF-8") + "&lastname=" + URLEncoder.encode(this.lastname ,"UTF-8")+ "&email=" + this.email
                             +"&tenantid=" + this.tenantid + "&phone1=" + URLEncoder.encode(this.phone, "UTF-8") + "&invited_by=" + this.userid +
-                            "&city=" + URLEncoder.encode(this.city, "UTF-8") + "&region=" + this.region;
+                            "&city=" + URLEncoder.encode(this.city, "UTF-8") + "&region=" + URLEncoder.encode(this.region, "UTF-8");
                     //body.toString();//"email=" + this.username + "&password=" + this.pwd;
                     Log.e("query", query);
                     OutputStream os = urlConnection.getOutputStream();
@@ -364,19 +358,19 @@ public class InviteUser extends AppCompatActivity {
             try {
                 JSONObject returnedResult = new JSONObject(result);
                 if (returnedResult.has("success") && returnedResult.getInt("success") == 1 && returnedResult.has("faillure") && returnedResult.getInt("faillure") == 0){
-                    result_invite_user.setText(returnedResult.getString(Utils.RESPONSE));
-                    result_invite_user.setTextColor(Color.GREEN);
+                    result_create_user.setText(returnedResult.getString(Utils.RESPONSE));
+                    result_create_user.setTextColor(Color.GREEN);
                 }else {
-                    result_invite_user.setText(returnedResult.getString(Utils.RAISON));
-                    result_invite_user.setTextColor(Color.RED);
+                    result_create_user.setText(returnedResult.getString(Utils.RAISON));
+                    result_create_user.setTextColor(Color.RED);
                 }
             } catch (JSONException e) {
                 //e.printStackTrace();
-                result_invite_user.setText("Whoop Something Went wrong!!!");
-                result_invite_user.setTextColor(Color.RED);
+                result_create_user.setText("Whoop Something Went wrong!!!");
+                result_create_user.setTextColor(Color.RED);
             }
 
-           // Log.e("result", result);
+            // Log.e("result", result);
         }
     }
 
@@ -398,4 +392,5 @@ public class InviteUser extends AppCompatActivity {
             return retVal;
         }
     }
+
 }

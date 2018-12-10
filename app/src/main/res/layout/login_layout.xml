@@ -156,6 +156,14 @@
                         android:textSize="16sp"/>
                 </android.support.design.widget.TextInputLayout>
 
+                <ProgressBar
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:id="@+id/progressBarGetTenant"
+                    android:visibility="gone"
+                    android:layout_gravity="center"
+                    />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -166,14 +174,6 @@
                 android:id="@+id/tenant_layout"
                 android:visibility="gone"
                 >
-
-                <ProgressBar
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:id="@+id/progressBarGetTenant"
-                    android:visibility="gone"
-                    android:layout_gravity="center"
-                    />
 
                 <TextView
                     android:layout_width="match_parent"

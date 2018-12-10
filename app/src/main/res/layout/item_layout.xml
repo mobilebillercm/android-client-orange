@@ -5,7 +5,8 @@
     android:baselineAligned="false"
     android:longClickable="true"
     android:orientation="horizontal"
-    android:paddingRight="10dp" 
+    android:paddingRight="10dp"
+    android:id="@+id/smsview"
     android:paddingBottom="10dp">
 
     <LinearLayout
@@ -166,11 +167,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:background="#FFFFFFFF"
                     android:padding="10dp"
                     android:text=""
                     android:visibility="visible" />
             </ScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <ProgressBar
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:id="@+id/print_loader"
+                android:visibility="gone"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -189,12 +204,6 @@
                 android:textColor="#ff0000"
                 android:drawableLeft="@drawable/red_trash"
                 android:drawablePadding="3dp"/>
-            <ProgressBar
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_weight="1"
-                android:id="@+id/print_loader"
-                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/imprimer_btn"
@@ -206,6 +215,18 @@
                 android:textColor="@color/mycolor"
                 android:text="@string/imprimer"
                 android:drawableLeft="@drawable/imprinante"
+                android:drawablePadding="3dp"/>
+
+            <Button
+                android:id="@+id/partager_btn"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:textSize="10sp"
+                android:layout_height="35dp"
+                android:layout_weight="4"
+                android:textColor="@color/mycolor"
+                android:text="@string/share"
+                android:drawableLeft="@drawable/share"
                 android:drawablePadding="3dp"/>
         </LinearLayout>
     </LinearLayout>

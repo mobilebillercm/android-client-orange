@@ -3,8 +3,10 @@ package cm.softinovplus.mobilebiller.orange;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -21,7 +23,6 @@ import cm.softinovplus.mobilebiller.orange.dialog.LogoutDialog;
 import cm.softinovplus.mobilebiller.orange.utils.Utils;
 
 public class DefaulPrinterConfigActivity extends AppCompatActivity {
-
 
     public static AppCompatActivity thisActivity;
     private BluetoothAdapter G_bluetoothAdapter;
@@ -74,7 +75,11 @@ public class DefaulPrinterConfigActivity extends AppCompatActivity {
             bluetooth_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    showDefaultPrinterSettingDialog(position);
+                    adapter = new SettingBluetoothAdapter(thisActivity, G_devices);
+                    bluetooth_list.setAdapter(adapter);
+                    //view.setBackgroundColor(Color.rgb(171, 242, 188));
+                    //Log.e("ITEM VIEW", "" + ((TextView)view.findViewById(R.id.device_mac_address)).getText());
+                    showDefaultPrinterSettingDialog(adapter, view, position);
 
                 }
             });
@@ -83,7 +88,7 @@ public class DefaulPrinterConfigActivity extends AppCompatActivity {
 
     }
 
-    public void showDefaultPrinterSettingDialog(int position){
+    public void showDefaultPrinterSettingDialog(SettingBluetoothAdapter adapter, View view, int position){
         mStackLevel++;
 
         android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -92,7 +97,7 @@ public class DefaulPrinterConfigActivity extends AppCompatActivity {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-        SetDefaultPrinter defaultPrinter = new SetDefaultPrinter(this.G_devices, position, default_printer_name, default_printer_mac_address);
+        SetDefaultPrinter defaultPrinter = new SetDefaultPrinter(this.G_devices, adapter, view, position, default_printer_name, default_printer_mac_address);
 
         DefaultBluetoothSettingDialog defaultBluetoothSettingDialog = DefaultBluetoothSettingDialog.newInstance(defaultPrinter, mStackLevel);
         //QRCodeDialog qrCodeDialog = new QRCodeDialog();
@@ -102,12 +107,16 @@ public class DefaulPrinterConfigActivity extends AppCompatActivity {
 
     public class SetDefaultPrinter{
         private Set<BluetoothDevice> gdevices;
+        private SettingBluetoothAdapter adapter;
+        private View view;
         private int position;
         private TextView name, mac;
         private String nom;
 
-        public SetDefaultPrinter(Set<BluetoothDevice> gdevices, int position, TextView name, TextView mac) {
+        private SetDefaultPrinter(Set<BluetoothDevice> gdevices, SettingBluetoothAdapter adapter, View view, int position, TextView name, TextView mac) {
             this.gdevices = gdevices;
+            this.adapter = adapter;
+            this.view = view;
             this.position = position;
             this.name = name;
             this.mac = mac;
@@ -115,12 +124,19 @@ public class DefaulPrinterConfigActivity extends AppCompatActivity {
         }
 
         public void setDefaultPrinter(){
+
             BluetoothDevice device = (BluetoothDevice)this.gdevices.toArray()[this.position];
             SharedPreferences.Editor editeur  = getSharedPreferences(Utils.APP_CONFIGURAION, MODE_PRIVATE).edit();
             editeur.putString(Utils.DEFAULT_MAC_ADDRESS, device.getAddress());
             editeur.apply();
             this.name.setText(device.getName());
             this.mac.setText("MAC: " + device.getAddress());
+            TextView textView = view.findViewById(R.id.device_name);
+            textView.setTextColor(Color.rgb(50,200,50));
+            textView.setText(textView.getText() + " -------------------------------------------" + device.getAddress());
+            this.view.setBackgroundColor(Color.rgb(171, 242, 188));
+            this.adapter.notifyDataSetChanged();
+
         }
 
         public String getNom(){

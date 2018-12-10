@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
 
@@ -82,6 +83,7 @@ public class Authenticated extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_authenticated);
         authPreferences = getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
 
@@ -118,9 +120,27 @@ public class Authenticated extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.inviter) {
                     mDrawerLayout.closeDrawers();
-                    Intent intent = new Intent(getApplicationContext(), InviteUser.class);
-                    startActivity(intent);
+                    if (Utils.isParent){
+                        Intent intent = new Intent(getApplicationContext(), InviteUser.class);
+                        startActivity(intent);
+                    }else {
+                        Toast.makeText(getApplicationContext(), "Vous n'etes pas autorises.", Toast.LENGTH_LONG).show();
+                    }
+
                 }
+
+
+                if (menuItem.getItemId() == R.id.create) {
+                    mDrawerLayout.closeDrawers();
+                    if (Utils.isParent){
+                        Intent intent = new Intent(getApplicationContext(), CreateUser.class);
+                        startActivity(intent);
+                    }else {
+                        Toast.makeText(getApplicationContext(), "Vous n'etes pas autorises.", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+
 
                 if (menuItem.getItemId() == R.id.mestransactions) {
                     mDrawerLayout.closeDrawers();
@@ -150,6 +170,7 @@ public class Authenticated extends AppCompatActivity {
             }
 
         });
+
 
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout, null, R.string.app_name, R.string.app_name){
             @Override
@@ -239,12 +260,17 @@ public class Authenticated extends AppCompatActivity {
         DownloadImageTask downloadImageTask = new DownloadImageTask(logo, (ProgressBar) findViewById(R.id.id_image_loader));
         downloadImageTask.execute(Utils.makeTenantLogoUrl(authPreferences.getString(Utils.TENANT_ID, "")));
 
+        GetUser getUser = new GetUser(this, (ProgressBar) findViewById(R.id.id_image_loader), authPreferences.getString(Utils.ACCESS_TOKEN, ""));
+        getUser.execute(Utils.HOST_IDENTITY_AND_ACCESS + "api/users/" + authPreferences.getString(Utils.USERID,"") + "/" + authPreferences.getString(Utils.TENANT_ID,"")
+        + "/details?scope=SCOPE_MANAGE_OWN_SERVICE_PAYEMENT");
+
+
+
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-
     }
 
     private void hideKeyboard() {
@@ -423,6 +449,27 @@ public class Authenticated extends AppCompatActivity {
 
             progressBar.setVisibility(View.GONE);
 
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null){
+                long smsid = bundle.getLong(Utils.SMS_ID, -1);
+
+                if (smsid != -1){
+                    Log.e("SMSID_SMSID0", "" + smsid);
+                    bundle.remove(Utils.SMS_ID);
+                    Intent intent = new Intent(getApplicationContext(), PrintNewSMS.class);
+                    intent.putExtra(Utils.SMS_ID, smsid);
+                    startActivity(intent);
+                }
+            }
+
+            /*Intent intent = getIntent();
+            boolean coming_from_notification = intent.getBooleanExtra(Utils.COMING_FROM_NOTIFICATION, false);
+            if (coming_from_notification){
+                Intent intent1 = new Intent(getApplicationContext(), PrintNewSMS.class);
+                intent1.putExtra(Utils.data, intent.getBundleExtra(Utils.data));
+                startActivity(intent1);
+            }*/
+
 
         }
     }
@@ -462,6 +509,14 @@ public class Authenticated extends AppCompatActivity {
 
         logoutDialog.show(ft, "dialog");
 
+    }
+
+    @Override
+    public void onStop(){
+        if (getIntent().getExtras() != null){
+            getIntent().getExtras().remove(Utils.SMS_ID);
+        }
+        super.onStop();
     }
 
     public class DoLogout extends AsyncTask<String, Integer, String> {
@@ -1138,6 +1193,217 @@ public class Authenticated extends AppCompatActivity {
                 retVal = false;
             }
             return retVal;
+        }
+    }
+
+
+    private class GetUser extends AsyncTask<String, Integer, String> {
+        private ProgressBar dialog;
+        private Context context;
+        private String access_token;
+        private int statusCode = 0;
+
+        public GetUser(Context context, ProgressBar dialog, String access_token) {
+            this.context = context;
+            this.dialog = dialog;
+            this.access_token = access_token;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.dialog.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String resultat = "";
+            String str_url = strings[0];
+            URL url = null;
+            try {
+                url = new URL(str_url);
+                HttpsURLConnection urlConnection = null;
+                SSLContext context = null;
+                try {
+                    // Load CAs from an InputStream
+// (could be from a resource or ByteArrayInputStream or ...)
+                    CertificateFactory cf = CertificateFactory.getInstance("X.509");
+
+// From https://www.washington.edu/itconnect/security/ca/load-der.crt
+                    //InputStream caInput = new BufferedInputStream(getAssets().open("pridesoft.crt"));
+                    Certificate ca = null;
+                    try {
+                        try (InputStream caInput = getAssets().open("mobilebiller.crt")) {
+                            ca = cf.generateCertificate(caInput);
+                            //Log.e("CA=",  "\n\n\n\n\n" + ((X509Certificate) ca).getSubjectDN() + "\n\n\n\n");
+                            //System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+// Create a KeyStore containing our trusted CAs
+                    String keyStoreType = KeyStore.getDefaultType();
+                    KeyStore keyStore = null;
+                    try {
+                        keyStore = KeyStore.getInstance(keyStoreType);
+                    } catch (KeyStoreException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        keyStore.load(null, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                    keyStore.setCertificateEntry("ca", ca);
+
+                    HttpsURLConnection.setDefaultHostnameVerifier(new NullHostNameVerifier());
+
+// Create a TrustManager that trusts the CAs in our KeyStore
+                    String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+                    TrustManagerFactory tmf = null;
+                    try {
+                        tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        tmf.init(keyStore);
+                    } catch (KeyStoreException e) {
+                        e.printStackTrace();
+                    }
+
+// Create an SSLContext that uses our TrustManager
+                    try {
+                        context = SSLContext.getInstance("TLS");
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        context.init(null, tmf.getTrustManagers(), null);
+                    } catch (KeyManagementException e) {
+                        e.printStackTrace();
+                    }
+
+                    url = new URL(str_url);
+
+
+                    urlConnection = (HttpsURLConnection) url.openConnection();
+                    urlConnection.setSSLSocketFactory(context.getSocketFactory());
+                    urlConnection.setHostnameVerifier(new NullHostNameVerifier());
+
+                } catch (CertificateException e) {
+                    e.printStackTrace();
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }                try {
+                    Log.e("URL", str_url);
+                    //urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.setDoInput(true);
+                    urlConnection.setRequestProperty (Utils.AUTHORIZATION, Utils.BEARER + " " + this.access_token);
+
+                    this.statusCode = urlConnection.getResponseCode();
+                    Log.e("statusCode", "4: " + statusCode);
+                    InputStream in = urlConnection.getInputStream();
+                    BufferedReader br = null;
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+
+                    try {
+                        br = new BufferedReader(new InputStreamReader(in));
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line);
+                        }
+
+                    } catch (IOException e) {
+                        return e.getMessage();
+                    } finally {
+                        if (br != null) {
+                            try {
+                                br.close();
+                            } catch (IOException e) {
+                                Log.e("Exception3", "3: " + e.getMessage());
+                                return e.getMessage();
+                            }
+                        }
+                    }
+                    in.close();
+                    //os.close();
+                    resultat = sb.toString();
+                    /*}else if (statusCode == 401){
+
+                    }*/
+
+                } catch (IOException e) {
+                    //Log.e("Exception2", "2: " + e.getMessage());
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("error", "invalid_credentials");
+                        jsonObject.put("message", "something Went wrong");
+                        return jsonObject.toString();
+                    } catch (JSONException e1) {
+                        //e1.printStackTrace();
+
+                    }
+
+                    return e.getMessage();
+                }
+            } catch (MalformedURLException e) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("error", "Wopp something went wrong");
+                    jsonObject.put("message", "Wopp something went wrong");
+                    return jsonObject.toString();
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+                return e.getMessage();
+            }
+
+            return resultat;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (dialog.getVisibility() == View.VISIBLE) {
+                dialog.setVisibility(View.GONE);
+            }
+
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                if (jsonObject.has("success") && jsonObject.has("faillure") && jsonObject.getInt("success") == 1 && jsonObject.getInt("faillure") == 0 ){
+                    JSONArray jsonArray = jsonObject.getJSONArray(Utils.RESPONSE);
+                    if (jsonArray.length() == 0){
+                        Utils.isParent = false;
+                    }else {
+                        JSONObject jsonObject1 = jsonArray.getJSONObject(0);
+                        if (jsonObject1.isNull("parent")){
+                            Utils.isParent = true;
+                        }else {
+                            Utils.isParent = false;
+                        }
+                    }
+                }else{
+                    Utils.isParent = false;
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Menu menu = mNavigationView.getMenu();
+            MenuItem menuItem = menu.getItem(0);
+
+            menuItem.setVisible(Utils.isParent);
+
+            Log.e("Account details ", result);
+            Log.e("Is Parent  ", "" + Utils.isParent);
         }
     }
 

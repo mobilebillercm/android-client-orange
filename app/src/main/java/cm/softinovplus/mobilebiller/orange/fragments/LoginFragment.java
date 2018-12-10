@@ -74,6 +74,7 @@ import cm.softinovplus.mobilebiller.orange.utils.Tenant;
 import cm.softinovplus.mobilebiller.orange.utils.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
+import static cm.softinovplus.mobilebiller.orange.utils.Utils.APP_AUTHENTICATION;
 import static cm.softinovplus.mobilebiller.orange.utils.Utils.LoginFragment;
 import static cm.softinovplus.mobilebiller.orange.utils.Utils.SignUpFragment;
 
@@ -111,7 +112,6 @@ public class LoginFragment extends Fragment implements OnClickListener {
 
         hideKeyboard();
         initViews();
-        setListeners();
         return view;
     }
 
@@ -281,7 +281,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 
         // Else do login and do your stuff
         else {
-            Toast.makeText(getActivity(), "Do Login.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Do Login.", Toast.LENGTH_SHORT).show();
 
             ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.login_progrees_bar);
             progressBar.setVisibility(View.GONE);
@@ -522,6 +522,233 @@ public class LoginFragment extends Fragment implements OnClickListener {
         }
     }
 
+
+    private class BeginGetServiceVerification extends AsyncTask<String, Integer, String> {
+        private ProgressBar dialog;
+        private Context context;
+        private int clientId;
+        private String clienSecret;
+        private String grantType;
+        private String tenantid;
+        private String userid;
+        private int statusCode = 0;
+
+        public BeginGetServiceVerification(Context context, ProgressBar dialog, int clientId, String clienSecret, String grantType, String tenantid, String userid) {
+            this.context = context;
+            this.clientId = clientId;
+            this.clienSecret = clienSecret;
+            this.grantType = grantType;
+            this.dialog = dialog;
+            this.tenantid = tenantid;
+            this.userid = userid;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.dialog.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String resultat = "";
+            String str_url = strings[0];
+            URL url = null;
+            //try {
+            //url = new URL(str_url);
+            HttpsURLConnection urlConnection = null;
+
+
+            SSLContext context = null;
+            try {
+                // Load CAs from an InputStream
+// (could be from a resource or ByteArrayInputStream or ...)
+                CertificateFactory cf = CertificateFactory.getInstance("X.509");
+
+// From https://www.washington.edu/itconnect/security/ca/load-der.crt
+                //InputStream caInput = new BufferedInputStream(getAssets().open("pridesoft.crt"));
+                Certificate ca = null;
+                try {
+                    try (InputStream caInput = getActivity().getAssets().open("mobilebiller.crt")) {
+                        ca = cf.generateCertificate(caInput);
+                        //Log.e("CA=",  "\n\n\n\n\n" + ((X509Certificate) ca).getSubjectDN() + "\n\n\n\n");
+                        //System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+// Create a KeyStore containing our trusted CAs
+                String keyStoreType = KeyStore.getDefaultType();
+                KeyStore keyStore = null;
+                try {
+                    keyStore = KeyStore.getInstance(keyStoreType);
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    keyStore.load(null, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                keyStore.setCertificateEntry("ca", ca);
+
+                HttpsURLConnection.setDefaultHostnameVerifier(new NullHostNameVerifier());
+
+// Create a TrustManager that trusts the CAs in our KeyStore
+                String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+                TrustManagerFactory tmf = null;
+                try {
+                    tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    tmf.init(keyStore);
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                }
+
+// Create an SSLContext that uses our TrustManager
+                try {
+                    context = SSLContext.getInstance("TLS");
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    context.init(null, tmf.getTrustManagers(), null);
+                } catch (KeyManagementException e) {
+                    e.printStackTrace();
+                }
+
+                url = new URL(str_url);
+
+
+                urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setSSLSocketFactory(context.getSocketFactory());
+                urlConnection.setHostnameVerifier(new NullHostNameVerifier());
+
+            } catch (CertificateException e) {
+                e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+            try {
+                //urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+                //urlConnection.setRequestProperty("Content-Type","application/json");
+                Log.e("SEA URL", str_url);
+                String query = "client_id=" + this.clientId + "&client_secret=" + this.clienSecret + "&grant_type=" + this.grantType;
+                Log.e("query", query);
+                OutputStream os = urlConnection.getOutputStream();
+                OutputStreamWriter out = new OutputStreamWriter(os);
+                out.write(query);
+                out.close();
+
+                this.statusCode = urlConnection.getResponseCode();
+
+                Log.e("statusCode", "4: " + statusCode);
+
+                //if (statusCode ==  200) {
+                InputStream in = urlConnection.getInputStream();
+
+                BufferedReader br = null;
+                StringBuilder sb = new StringBuilder();
+                String line;
+                try {
+                    br = new BufferedReader(new InputStreamReader(in));
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line);
+                    }
+
+                } catch (IOException e) {
+                    return e.getMessage();
+                } finally {
+                    if (br != null) {
+                        try {
+                            br.close();
+                        } catch (IOException e) {
+                            Log.e("Exception3", "3: " + e.getMessage());
+                            return e.getMessage();
+                        }
+                    }
+                }
+                in.close();
+                //os.close();
+                resultat = sb.toString();
+                    /*}else if (statusCode == 401){
+
+                    }*/
+
+            } catch (IOException e) {
+                //Log.e("Exception2", "2: " + e.getMessage());
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("error", "invalid_credentials");
+                    jsonObject.put("message", "The user credentials were incorrect");
+                    return jsonObject.toString();
+                } catch (JSONException e1) {
+                    //e1.printStackTrace();
+
+                }
+
+                return e.getMessage();
+            }
+            /*} catch (MalformedURLException e) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("error", "Wopp something went wrong");
+                    jsonObject.put("message", "Wopp something went wrong");
+                    return jsonObject.toString();
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+                return e.getMessage();
+            }*/
+
+            return resultat;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (dialog.getVisibility() == View.VISIBLE) {
+                dialog.setVisibility(View.GONE);
+            }
+
+            //TextView textView = view.findViewById(R.id.resultgetaccesstoken);
+
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                if (jsonObject.has(Utils.ERROR)){
+                    Toast.makeText(getActivity().getApplicationContext(), "Ne peut Verifier l'acces aux services", Toast.LENGTH_LONG).show();
+                   // textView.setText(jsonObject.getString(Utils.MESSAGE));
+                }else if (jsonObject.has(Utils.ACCESS_TOKEN) && jsonObject.has(Utils.TOKEN_TYPE) && jsonObject.has(Utils.EXPIRES_IN) && jsonObject.getInt(Utils.EXPIRES_IN) > 0){
+                    GetServiceValidity getServiceValidity = new GetServiceValidity(getContext(), dialog, jsonObject.getString(Utils.ACCESS_TOKEN));
+
+                    getServiceValidity.execute(Utils.HOST_SERVICE_ACCESS + "api/tenant/" + this.tenantid + "/client/" + this.userid + "/services-validities-periods");
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Ne peut Verifier l'acces aux services", Toast.LENGTH_LONG).show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.e("result", result);
+        }
+    }
+
     private class DoLogin extends AsyncTask<String, Integer, String> {
         private ProgressBar dialog;
         private Context context;
@@ -750,16 +977,23 @@ public class LoginFragment extends Fragment implements OnClickListener {
                     editor.putString(Utils.TENANT_DESCRIPTION, response.getString(Utils.TENANT_DESCRIPTION));
                     editor.putString(Utils.NAME, response.getString(Utils.NAME));
 
+                    editor.putString(Utils.PHONE, response.getString(Utils.PHONE));
+                    editor.putString(Utils.TAXPAYERNUMBER, response.getString(Utils.NUMCONTIBUABLE));
+                    editor.putString(Utils.NUMBERTRADEREGISTER, response.getString(Utils.NUMREGISTRECOMMERCE));
+
                     editor.apply();
 
                     LoginFragment.this.emailid.setText("");
                     LoginFragment.this.password.setText("");
+                    GetServiceValidity getServiceValidity = new GetServiceValidity(getContext(), dialog, this.token.getString(Utils.ACCESS_TOKEN));
 
+                    getServiceValidity.execute(Utils.HOST_SERVICE_ACCESS + "api/tenant/" + this.tenantid + "/client/" + response.getString(Utils.USERID) +
+                            "/services-validities-periods?scope=SCOPE_MANAGE_OWN_SERVICE_PAYEMENT");
 
-                    GetServiceValidity getServiceValidity = new GetServiceValidity(getContext(), dialog);
+                    /*BeginGetServiceVerification beginGetServiceVerification = new BeginGetServiceVerification(this.context,this.dialog, Utils.SERVICE_ACCESS_CLIENT_ID,
+                            Utils.SERVICE_ACCESS_CLIENT_SECRET, Utils.CLIENT_GRANT_TYPE, response.getString(Utils.TENANT_ID), response.getString(Utils.USERID));
 
-                    getServiceValidity.execute(Utils.HOST_SERVICE_ACCESS + "api/tenant/" + response.getString(Utils.TENANT_ID) +
-                            "/client/" + response.getString(Utils.USERID) + "/services-validities-periods?scope=" + Utils.SCOPE_MANAGE_IDENTITIES_AND_ACCESSES);
+                    beginGetServiceVerification.execute(Utils.SERVICE_ACCESS_ACCESS_TOKEN_END_POINT);*/
 
 /////tenant/{tenantid}/client/{clientid}/services-validities-periods
 
@@ -937,6 +1171,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
                     //Log.e("Exception2", "2: " + e.getMessage());
                     JSONObject jsonObject = new JSONObject();
                     try {
+                        Log.e("ERRROOORRRRR", e.getMessage());
                         jsonObject.put("error", "invalid_credentials");
                         jsonObject.put("message", "something Went wrong");
                         return jsonObject.toString();
@@ -948,6 +1183,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
                     return e.getMessage();
                 }
             } catch (MalformedURLException e) {
+                Log.e("ERRROOORRRRR1", e.getMessage());
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("error", "Wopp something went wrong");
@@ -1238,7 +1474,35 @@ public class LoginFragment extends Fragment implements OnClickListener {
                 editor.apply();
                 Log.e("FINISH parse", e.getMessage());
             }
+            /*
+            SharedPreferences.Editor editor = authPreferences.edit();
+            editor.remove(Utils.USERNAME);
+            editor.remove(Utils.PASSWORD);
+            editor.remove(Utils.NAME);
+            editor.remove(Utils.EMAIL);
+            editor.remove(Utils.TENANT_ID);
+            editor.apply();
 
+             */
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+            String username = sharedPreferences.getString(Utils.USERNAME, null);
+            String password = sharedPreferences.getString(Utils.PASSWORD, null);
+            String name = sharedPreferences.getString(Utils.NAME, null);
+            String email = sharedPreferences.getString(Utils.EMAIL, null);
+            String tenantid = sharedPreferences.getString(Utils.TENANT_ID, null);
+            if (username != null & password != null & name != null & email != null &tenantid != null){
+                Intent intent = new Intent(getActivity().getApplicationContext(), Authenticated.class);
+                // Check if we're running on Android 5.0 or higher
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                    //startActivity(intent);
+                } else {
+                    startActivity(intent);
+                }
+            }
+
+            setListeners();
             Log.e("result", result);
         }
 
@@ -1265,11 +1529,13 @@ public class LoginFragment extends Fragment implements OnClickListener {
     private class GetServiceValidity extends AsyncTask<String, Integer, String> {
         private ProgressBar dialog;
         private Context context;
+        private String access_token;
         private int statusCode = 0;
 
-        public GetServiceValidity(Context context, ProgressBar dialog) {
-            this.context    = context;
-            this.dialog     = dialog;
+        public GetServiceValidity(Context context, ProgressBar dialog, String access_token) {
+            this.context       = context;
+            this.dialog        = dialog;
+            this.access_token  = access_token;
         }
 
         @Override
@@ -1372,10 +1638,10 @@ public class LoginFragment extends Fragment implements OnClickListener {
                     urlConnection.setRequestMethod("GET");
                     urlConnection.setDoInput(true);
                     //urlConnection.setDoOutput(true);
-                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
-                    String access_token = sharedPreferences.getString(Utils.ACCESS_TOKEN, "");
-                    Log.e("ACCESSTOKEN", access_token);
-                    urlConnection.setRequestProperty (Utils.AUTHORIZATION, Utils.BEARER + " " + access_token);
+                    //SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                    //String access_token = sharedPreferences.getString(Utils.ACCESS_TOKEN, "");
+                    Log.e("ACCESSTOKENSEASEA", this.access_token);
+                    urlConnection.setRequestProperty (Utils.AUTHORIZATION, Utils.BEARER + " " + this.access_token);
                     //urlConnection.setRequestProperty(Utils.CONTENT_TYPE, Utils.APPLICATION_JSON);
                     /*JSONObject body = new JSONObject();
                     body.put(Utils.EMAIL, this.username);
@@ -1472,23 +1738,31 @@ public class LoginFragment extends Fragment implements OnClickListener {
             }
 
 
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Utils.APP_OTHER_CONFIGURAION, MODE_PRIVATE);
-            if (sharedPreferences.getLong(Utils.LAST_SMS_ID, -1) != -1){
-                startActivity(new Intent(getActivity(), PrintNewSMS.class));
-            }else{
-                Intent intent = new Intent(getActivity().getApplicationContext(), Authenticated.class);
-                // Check if we're running on Android 5.0 or higher
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
-                    //startActivity(intent);
-                } else {
-                    startActivity(intent);
-                }
+            Bundle bundle = getActivity().getIntent().getExtras();
+            long smsid = -1;
+            if (bundle != null){
+                smsid = bundle.getLong(Utils.SMS_ID, -1);
+                getActivity().getIntent().getExtras().remove(Utils.SMS_ID);
+            }
+
+            Intent intent = new Intent(getActivity().getApplicationContext(), Authenticated.class);
+            if (smsid != -1) {
+                intent.putExtra(Utils.SMS_ID, smsid);
+            }
+            // Check if we're running on Android 5.0 or higher
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                getActivity().finish();
+                //startActivity(intent);
+            } else {
+                startActivity(intent);
+                getActivity().finish();
             }
 
             Log.e("result Service access", result);
         }
     }
+
 
 }
 

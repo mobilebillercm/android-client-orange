@@ -111,6 +111,11 @@ public class Welcome extends AppCompatActivity {
         // to stopService() won't prevent scheduled jobs to be processed. However, failing
         // to call stopService() would keep it alive indefinitely.
        // stopService(new Intent(this, NetworkSchedulerService.class));
+
+        if (getIntent().getExtras() != null){
+            getIntent().getExtras().remove(Utils.SMS_ID);
+        }
+
         super.onStop();
     }
 
@@ -136,7 +141,7 @@ public class Welcome extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences(Utils.APP_CONFIGURAION, MODE_PRIVATE);
             String broadcast_receiver_initiated = prefs.getString(Utils.BROADCAST_RECEIVER_REGISTERED, null);
 
-            Toast.makeText(getApplicationContext(), broadcast_receiver_initiated, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), broadcast_receiver_initiated, Toast.LENGTH_LONG).show();
 
         }
     }
@@ -262,4 +267,6 @@ public class Welcome extends AppCompatActivity {
             Log.e("NETWORK STATE", message);
         }
     }
+
+
 }

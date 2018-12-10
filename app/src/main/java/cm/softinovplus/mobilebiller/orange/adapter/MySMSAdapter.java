@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +17,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +35,7 @@ import cm.softinovplus.mobilebiller.orange.BluetoothPrinterActivity;
 import cm.softinovplus.mobilebiller.orange.PrintNewSMS;
 import cm.softinovplus.mobilebiller.orange.R;
 import cm.softinovplus.mobilebiller.orange.SMSsActivity;
+import cm.softinovplus.mobilebiller.orange.TicketToShareActivity;
 import cm.softinovplus.mobilebiller.orange.db.SMSDataSource;
 import cm.softinovplus.mobilebiller.orange.sms.SMS;
 import cm.softinovplus.mobilebiller.orange.utils.Utils;
@@ -68,6 +73,13 @@ public class MySMSAdapter extends BaseAdapter {
             v=li.inflate(R.layout.item_layout, null);
         }
         final SMS sms = values.get(pos);
+         if (sms.getIs_yet_printed() == 1){
+             LinearLayout linearLayout = v.findViewById(R.id.smsview);
+             linearLayout.setBackgroundColor(Color.rgb(240, 240, 240));
+         }else{
+             LinearLayout linearLayout = v.findViewById(R.id.smsview);
+             linearLayout.setBackgroundColor(Color.rgb(255, 255, 255));
+         }
         
         /*if(sms.getHas_been_printed() == 0){
         	v.setBackgroundColor(0x2200FF00);
@@ -188,7 +200,12 @@ public class MySMSAdapter extends BaseAdapter {
                                 return;
                             }
 
-                            BluetoothPrinterActivity.MyAsyncTask mat = new BluetoothPrinterActivity.MyAsyncTask(context, choosenDevice, sms, progressBar);
+                            SMSDataSource dataSource = new SMSDataSource(context);
+                            dataSource.open();
+                            SMS datasourcesms = dataSource.getSMSById(sms.getId());
+                            dataSource.close();
+
+                            BluetoothPrinterActivity.MyAsyncTask mat = new BluetoothPrinterActivity.MyAsyncTask(context, choosenDevice, datasourcesms, progressBar);
                             mat.execute("");
                         }else {
                             Toast.makeText(context, "No bluetooth choosen", Toast.LENGTH_LONG).show();
@@ -206,15 +223,25 @@ public class MySMSAdapter extends BaseAdapter {
 			}
 		});
         
-       final Button me_supprimer = (Button)v.findViewById(R.id.me_supprimer);
+       final Button me_supprimer = v.findViewById(R.id.me_supprimer);
        me_supprimer.setOnClickListener(new OnClickListener() {
 		@Override
 		public void onClick(View v) {
             ((SMSsActivity) context).prepareRemoveSms(sms);
-		}
-	});
-        
-        return v;
+		    }
+	    });
+
+         Button partger_btn = v.findViewById(R.id.partager_btn);
+         partger_btn.setOnClickListener(new OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                Intent intent = new Intent(context, TicketToShareActivity.class);
+                intent.putExtra(Utils.SMS, (new Gson()).toJson(sms));
+                 context.startActivity(intent);
+             }
+         });
+
+         return v;
       }
     
 }

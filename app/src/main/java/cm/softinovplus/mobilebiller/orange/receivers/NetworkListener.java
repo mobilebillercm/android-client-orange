@@ -75,7 +75,7 @@ public class NetworkListener extends BroadcastReceiver {
         if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)){
 
 
-            /*SMSDataSource smsDatatSource1 = new SMSDataSource(context);
+            SMSDataSource smsDatatSource1 = new SMSDataSource(context);
             smsDatatSource1.open();
             SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
 
@@ -85,26 +85,28 @@ public class NetworkListener extends BroadcastReceiver {
                     2000, "TAFOLONG FRANCIS","+23767174756", "2018-09-25 10:30:40", "123456", "147852369", 0, "2018-09-25 10:30:40",
                     30000, "XAF","NKALLA EHAWE" ,"+671747569", "2018-09-25 10:30:40", "Paiement reussi de FOWA JOSEPH LYCEE TECHNIQUE DE NYLON-1er cycle Date 06/09/2018 12:11:22 Montant 10000 XAF Pay ID 12623. Votre Pay ID est votre preuve de paiement.",
                     " ",sharedPreferences.getString(Utils.TENANT_ID, Utils.DEFAULT_TENANT_ID),
-                    sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME), System.currentTimeMillis(), 0, 0);
+                    sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME), System.currentTimeMillis(), 0, 0,
+                    sharedPreferences.getString(Utils.EMAIL, ""), sharedPreferences.getString(Utils.PHONE, ""),
+                    sharedPreferences.getString(Utils.TAXPAYERNUMBER, ""), sharedPreferences.getString(Utils.NUMBERTRADEREGISTER, ""));
             SMS sms1 = smsDatatSource1.createSMS(System.currentTimeMillis(),"Retrait",
                     2000, "TAFOLONG FRANCIS 1","+23767174756", "2018-09-25 10:30:40", "123456", "147852369", 0, "2018-09-25 10:30:40",
                     30000, "XAF","NKALLA EHAWE 1" ,"+671747569", "2018-09-25 10:30:40", "Paiement reussi de FOWA JOSEPH LYCEE TECHNIQUE DE NYLON-1er cycle Date 06/09/2018 12:11:22 Montant 10000 XAF Pay ID 12623. Votre Pay ID est votre preuve de paiement.",
                     " ",sharedPreferences.getString(Utils.TENANT_ID, Utils.DEFAULT_TENANT_ID),
-                    sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME), System.currentTimeMillis(), 0, 0);
+                    sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME), System.currentTimeMillis(), 0, 0,
+                    sharedPreferences.getString(Utils.EMAIL, ""), sharedPreferences.getString(Utils.PHONE, ""),
+                    sharedPreferences.getString(Utils.TAXPAYERNUMBER, ""), sharedPreferences.getString(Utils.NUMBERTRADEREGISTER, ""));
             SharedPreferences.Editor editor = context.getApplicationContext().getSharedPreferences(Utils.APP_CONFIGURAION, MODE_PRIVATE).edit();
             editor.putLong(Utils.LAST_SMS_ID, sms1.getId());
             editor.apply();
 
-            smsDatatSource1.close();*/
+            smsDatatSource1.close();
 
 
 
             Log.e("ListenConnection", "OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
             //Toast.makeText(context, "ListenConnection   OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", Toast.LENGTH_LONG).show();
 
-            boolean noConnectivity =
-                    intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-
+            boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
             if (noConnectivity) {
                 mState = NetworkInfo.State.DISCONNECTED;
             } else {

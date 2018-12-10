@@ -41,7 +41,11 @@ public class SMSDataSource {
 			  MySQLiteHelper.COLUMN_TENANT,
 			  MySQLiteHelper.COLUMN_RECEIVED_AT,
 			  MySQLiteHelper.COLUMN_IS_YET_PRINTED,
-			  MySQLiteHelper.COLUMN_IS_ONLINE_SAVED
+			  MySQLiteHelper.COLUMN_IS_ONLINE_SAVED,
+			  MySQLiteHelper.COLUMN_EMAIL,
+			  MySQLiteHelper.COLUMN_PHONE,
+			  MySQLiteHelper.COLUMN_TAXPAYERNUMBER,
+			  MySQLiteHelper.COLUMN_NUMBERTRADEREGISTER
 
 	  };
 	  
@@ -58,11 +62,11 @@ public class SMSDataSource {
 	    dbHelper.close();
 	  }
 	  
-	  public SMS createSMS(long id, String transaction_type, int transaction_amount, String transaction_beneficiary_name,
+	  public SMS createSMS(long id, String transaction_type, float transaction_amount, String transaction_beneficiary_name,
 						   String transaction_beneficiary_account_number, String transaction_date, String transaction_id,
-						   String transaction_reference, int transaction_fees, String transaction_state, int transaction_balance,
+						   String transaction_reference, float transaction_fees, String transaction_state, float transaction_balance,
 						   String transaction_currency, String transaction_made_by, String sms_sender, String sms_date, String sms_body, String sms_receiver, String belongs_to, String tenant,
-						   long received_at, int is_yet_printed, int is_online_saved) {
+						   long received_at, int is_yet_printed, int is_online_saved, String email, String phone, String tapayernumber, String numbertraderegister) {
 	    ContentValues values = new ContentValues();
 	    values.put(MySQLiteHelper.COLUMN_ID, id);
 	    values.put(MySQLiteHelper.COLUMN_TRANSACTION_TYPE, transaction_type);
@@ -86,6 +90,10 @@ public class SMSDataSource {
 		  values.put(MySQLiteHelper.COLUMN_RECEIVED_AT, received_at);
 		  values.put(MySQLiteHelper.COLUMN_IS_YET_PRINTED, is_yet_printed);
 		  values.put(MySQLiteHelper.COLUMN_IS_ONLINE_SAVED, is_online_saved);
+		  values.put(MySQLiteHelper.COLUMN_EMAIL, email);
+		  values.put(MySQLiteHelper.COLUMN_PHONE, phone);
+		  values.put(MySQLiteHelper.COLUMN_TAXPAYERNUMBER, tapayernumber);
+		  values.put(MySQLiteHelper.COLUMN_NUMBERTRADEREGISTER, numbertraderegister);
 		  Log.e("Start Save SMS", sms_body);
 
           Cursor cursore = database.query(MySQLiteHelper.TABLE_SMS, allColumns, "1" , null, null, null, MySQLiteHelper.COLUMN_ID + " ");
@@ -148,14 +156,14 @@ public class SMSDataSource {
 	  }
 	  
 	  private SMS cursorToSMS(Cursor cursor) {
-	    SMS sms = new SMS();
-	    sms.setId(cursor.getLong(0));
-	    sms.setTransaction_type(cursor.getString(1));
-	    sms.setTransaction_amount(cursor.getInt(2));
-        sms.setTransaction_beneficiary_name(cursor.getString(3));
-	    sms.setTransaction_beneficiary_account_number(cursor.getString(4));
-	    sms.setTransaction_date(cursor.getString(5));
-	    sms.setTransaction_id(cursor.getString(6));
+	      SMS sms = new SMS();
+	      sms.setId(cursor.getLong(0));
+	      sms.setTransaction_type(cursor.getString(1));
+	      sms.setTransaction_amount(cursor.getInt(2));
+          sms.setTransaction_beneficiary_name(cursor.getString(3));
+	      sms.setTransaction_beneficiary_account_number(cursor.getString(4));
+	      sms.setTransaction_date(cursor.getString(5));
+	      sms.setTransaction_id(cursor.getString(6));
 		  sms.setTransaction_reference(cursor.getString(7));
 		  sms.setTransaction_fees(cursor.getInt(8));
 		  sms.setTransaction_state(cursor.getString(9));
@@ -171,19 +179,24 @@ public class SMSDataSource {
 		  sms.setReceived_at(cursor.getLong(19));
 		  sms.setIs_yet_printed(cursor.getInt(20));
 		  sms.setIs_online_saved(cursor.getInt(21));
+		  sms.setEmail(cursor.getString(22));
+		  sms.setPhone(cursor.getString(23));
+		  sms.setTaxpayernumber(cursor.getString(24));
+		  sms.setNumbertraderegister(cursor.getString(25));
 		  Log.e("SMS FROM CURSOR", sms.toString());
 	    return sms;
 	  }
-	  /*
-	  long id, String , int , String ,
-						   String , String , String ,
-						   String , int , String , int ,
-						   String , String , String , String , String , String , String tenant,
-						   long received_at, int is_yet_printed
-	   */
+
 	public boolean updateSMS(long id, ContentValues values){
 		String [] params = {"" + id};
-		   int a  = database.update(MySQLiteHelper.TABLE_SMS, values, "" +MySQLiteHelper.COLUMN_ID + "=?"  , params);
+		   int a  = database.update(MySQLiteHelper.TABLE_SMS, values, MySQLiteHelper.COLUMN_ID + "=?"  , params);
+
+		Log.e("UPDATE RETURNED", "" + a);
+
+		SMS sms = getSMSById(id);
+
+		Log.e("SAVED SMS", sms.toString());
+
 		   return (a==1);
 	  }
 

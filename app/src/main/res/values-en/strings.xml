@@ -75,6 +75,7 @@
     <string name="pwd_successfully_changed">Mot de Passe Modifie avec Succes</string>
     <string name="failed_to_change_pwd">Echec de Modification du Mot de passe</string>
     <string name="invite_user">Inviter un Collaborateur</string>
+    <string name="create_user">Creer un Collaborateur</string>
     <string name="inite">Inviter</string>
     <string name="are_you_sure">Etes Vous Sur de Vouloir vous Deconnecter?</string>
 
@@ -91,6 +92,10 @@
     <string name="chargement_configuration">Chargement de configurations</string>
     <string name="taxpayernumber">Numero De Contribuable</string>
     <string name="numbertraderegister">Numero de Registre de Commercde</string>
+    <string name="share">Partager</string>
+    <string name="whatsapp">WathsApp</string>
+    <string name="facebook">Facebook</string>
+    <string name="send_via">Envoyer Par</string>
 
 
     <string-array name="regions">

@@ -124,13 +124,28 @@ public class Utils {
     public static final String serviceid                         = "serviceid";
     public static final String HOSTNAME                          = "mobilebiller.idea-cm.club";
     public static final String CONNECTIVITY_ACTION               = "CONNECTIVITY_ACTION";
+    public static final String PHONE                             = "phone";
+    public static final String TAXPAYERNUMBER                    = "taxpayernumber";
+    public static final String NUMBERTRADEREGISTER               = "numbertraderegister";
+    public static final String NUMREGISTRECOMMERCE               = "numregistrecommerce";
+    public static final String NUMCONTIBUABLE                    = "numcontribuable";
+    public static final String COMING_FROM_NOTIFICATION          = "coming_from_notification";
+    public static final String SMS                               = "sms";
+    public static final String TICKET_IMAGE_FOLDER               = "ticket_images";
+    public static final int SERVICE_ACCESS_CLIENT_ID             =  2;
+    public static final String SMS_ID                            = "sms_id";
+    public static final String MTNCAMEROON                       = "mtncameroon";
+    public static final String ORANGECAMEROON                    = "orangecameroon";
+    public static final String FRENCHVERSION                     = "frenchversion";
+    public static final String ENGLISHVERSION                    = "englishversion";
 
-
-
+    public static final String  SERVICE_ACCESS_CLIENT_SECRET     =  "OVywGpw9AYBDMckYSnmmLUvggMSVJGLiUdDr3Dsj";
+    public static final String SERVICE_ACCESS_ACCESS_TOKEN_END_POINT     = "https://mobilebiller.idea-cm.club:4445/oauth/token";
 
 
 
     public static final String SCOPE_MANAGE_IDENTITIES_AND_ACCESSES = "SCOPE_MANAGE_IDENTITIES_AND_ACCESSES";
+    public static boolean isParent = false;
 
 
 
@@ -155,7 +170,7 @@ public class Utils {
 
     public static String makeDateDate(long when){
         Date date = new Date(when);
-        return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)).format(date);
+        return (new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH)).format(date);
     }
 
     public static String makeUrlUserTenants(String username){

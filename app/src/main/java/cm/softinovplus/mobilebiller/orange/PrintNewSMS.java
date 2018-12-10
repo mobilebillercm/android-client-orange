@@ -1,6 +1,5 @@
 package cm.softinovplus.mobilebiller.orange;
 
-
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -44,13 +43,6 @@ public class PrintNewSMS extends AppCompatActivity {
 		boolean is_connected = true;
 		SharedPreferences prefs = getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
 
-		//long connected_since = prefs.getLong(Utils.EXPIRES_IN, 0);
-
-		//long when = System.currentTimeMillis();
-
-		//is_connected = (connected_since > when);
-
-		//SharedPreferences preferences = context.getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
 		String pref_email =  prefs.getString(Utils.EMAIL,null);
 		String pref_passowrd = prefs.getString(Utils.PASSWORD, null);
 		String pref_token_type = prefs.getString(Utils.TOKEN_TYPE, null);
@@ -65,8 +57,12 @@ public class PrintNewSMS extends AppCompatActivity {
 			SharedPreferences.Editor otherEditor = getSharedPreferences(Utils.APP_OTHER_CONFIGURAION, MODE_PRIVATE).edit();
 			otherEditor.putLong(Utils.LAST_SMS_ID, sharedPreferences.getLong(Utils.LAST_SMS_ID, -1));
 			otherEditor.apply();
-			startActivity(new Intent(this, Welcome.class));
+			Intent intent = new Intent(this, Welcome.class);
+			long smsid = getIntent().getExtras().getLong(Utils.SMS_ID, -1);
+			intent.putExtra(Utils.SMS_ID, smsid);
+			startActivity(intent);
             finish();
+			return;
 		}
 
 		setContentView(R.layout.new_sms);
@@ -86,11 +82,13 @@ public class PrintNewSMS extends AppCompatActivity {
 		no_print = findViewById(R.id.no_print);
 		back = findViewById(R.id.back);
 		soustitre.setText(prefs.getString(Utils.EMAIL, "Erro@Error"));
-		SharedPreferences sharedPreferences = getSharedPreferences(Utils.APP_CONFIGURAION, MODE_PRIVATE);
-		long last_sms_id = sharedPreferences.getLong(Utils.LAST_SMS_ID, -1);
+		long smsid = getIntent().getExtras().getLong(Utils.SMS_ID, -1);
+
+		Log.e("SMSID_SMSID", "" + smsid);
+
 		SMSDataSource dataSource = new SMSDataSource(this);
 		dataSource.open();
-		sms = dataSource.getSMSById(last_sms_id);
+		sms = dataSource.getSMSById(smsid);
 		dataSource.close();
 		if(sms != null){
 			sms_sender.setText(sms.getSms_sender());
@@ -103,10 +101,12 @@ public class PrintNewSMS extends AppCompatActivity {
 			montant.setText("Montant: " + sms.getTransaction_amount());
 		}
 
+		Log.e("SMS IN PRINTNEWSMS", sms.toString());
+
 		no_print.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				finish();
+				onBackPressed();
 			}
 		});
 		yes_print.setOnClickListener(new View.OnClickListener() {
@@ -130,12 +130,10 @@ public class PrintNewSMS extends AppCompatActivity {
 							editor.apply();
 							startActivity(intent);
 						} else {
-
 							if (!G_bluetoothAdapter.isEnabled()) {
 								G_bluetoothAdapter.enable();
 							}
 							Set<BluetoothDevice> G_devices = G_bluetoothAdapter.getBondedDevices();
-
 							Object []devices = G_devices.toArray();
 							BluetoothDevice choosenDevice = null;
 							for (int i=0; i<devices.length; i++){
@@ -146,17 +144,13 @@ public class PrintNewSMS extends AppCompatActivity {
 								}
 							}
 							if (choosenDevice != null){
-
                                 SharedPreferences sharedPreferences_access_service = getSharedPreferences(Utils.APP_SERVICE_ACCESS, MODE_PRIVATE);
-
                                 boolean serviceValidity = false;
                                 boolean serviceFound = false;
-
                                 try {
                                     String accesses = sharedPreferences_access_service.getString(Utils.SERVICE_ACCESS,"");
                                     Log.e("ACCESSES", accesses);
                                     JSONArray jsonArray = new JSONArray(accesses);
-
                                     for (int i= 0; i<jsonArray.length(); i++){
                                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                                         if (jsonObject.getString(Utils.serviceid).equals(Utils.PRINT_SERVICE_ID)){
@@ -170,24 +164,26 @@ public class PrintNewSMS extends AppCompatActivity {
                                             break;
                                         }
                                     }
-
                                 } catch (JSONException e) {
                                     Toast.makeText(getApplicationContext(), "Not Authorized", Toast.LENGTH_LONG).show();
                                     return;
                                 }
-
                                 if (!serviceFound || !serviceValidity){
                                     Toast.makeText(getApplicationContext(), "Not Authorized", Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
+								SMSDataSource dataSource = new SMSDataSource(getApplicationContext());
+								dataSource.open();
+								SMS datasourcesms = dataSource.getSMSById(sms.getId());
+								dataSource.close();
+
 								ProgressBar progressBar = findViewById(R.id.print_loader);
-								BluetoothPrinterActivity.MyAsyncTask mat = new BluetoothPrinterActivity.MyAsyncTask(printSingleSMS_Self, choosenDevice, sms, progressBar);
+								BluetoothPrinterActivity.MyAsyncTask mat = new BluetoothPrinterActivity.MyAsyncTask(printSingleSMS_Self, choosenDevice, datasourcesms, progressBar);
 								mat.execute("");
 							}else {
 								Toast.makeText(getApplicationContext(), "No bluetooth choosen", Toast.LENGTH_LONG).show();
 							}
-
 						}
 					}else{
 						Log.e("macaddress", "macaddress3: " + macaddress);
@@ -230,14 +226,14 @@ public class PrintNewSMS extends AppCompatActivity {
 		return d.getTime();
 	}
 
-
-
-
 	@Override
 	public void onBackPressed() {
-		SharedPreferences.Editor otherEditor = getSharedPreferences(Utils.APP_OTHER_CONFIGURAION, MODE_PRIVATE).edit();
-		otherEditor.remove(Utils.LAST_SMS_ID);
-		otherEditor.apply();
+		//SharedPreferences.Editor otherEditor = getSharedPreferences(Utils.APP_OTHER_CONFIGURAION, MODE_PRIVATE).edit();
+		//otherEditor.remove(Utils.LAST_SMS_ID);
+		//otherEditor.apply();
+
+        getIntent().getExtras().remove(Utils.SMS_ID);
+
 		super.onBackPressed();
 	}
 }

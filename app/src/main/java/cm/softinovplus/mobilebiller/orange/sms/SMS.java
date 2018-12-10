@@ -5,15 +5,16 @@ public class SMS {
 	private long id, received_at;
 	private String transaction_type, transaction_beneficiary_name, transaction_beneficiary_account_number,
 			transaction_date, transaction_id, transaction_reference, transaction_state,
-			transaction_currency, transaction_made_by, sms_sender, sms_date, sms_body, sms_receiver, belongs_to, tenant;
-	private int transaction_amount, transaction_balance, is_yet_printed, transaction_fees, is_online_saved;
+			transaction_currency, transaction_made_by, sms_sender, sms_date, sms_body, sms_receiver, belongs_to, tenant, email, phone, taxpayernumber, numbertraderegister;
+	private int is_yet_printed, is_online_saved;
+	private float transaction_amount, transaction_balance, transaction_fees;
 	public SMS(){}
 
-	public SMS(long id, String transaction_type, int transaction_amount, String transaction_beneficiary_name,
+	public SMS(long id, String transaction_type, float transaction_amount, String transaction_beneficiary_name,
 			   String transaction_beneficiary_account_number, String transaction_date, String transaction_id,
-			   String transaction_reference, int transaction_fees, String transaction_state, int transaction_balance,
+			   String transaction_reference, float transaction_fees, String transaction_state, float transaction_balance,
 			   String transaction_currency, String transaction_made_by, String sms_sender, String sms_date, String sms_body, String sms_receiver, String belongs_to, String tenant,
-			   long received_at, int is_yet_printed, int is_online_saved) {
+			   long received_at, int is_yet_printed, int is_online_saved,  String email, String phone, String taxpayernumber, String numbertraderegister) {
 		this.id = id;
 		this.received_at = received_at;
 		this.transaction_type = transaction_type;
@@ -36,6 +37,11 @@ public class SMS {
 		this.transaction_balance = transaction_balance;
 		this.is_yet_printed = is_yet_printed;
 		this.is_online_saved = is_online_saved;
+		this.email= email;
+		this.phone = phone;
+		this.taxpayernumber = taxpayernumber;
+		this.numbertraderegister = numbertraderegister;
+
 	}
 
 	public long getId() {
@@ -102,11 +108,11 @@ public class SMS {
 		this.transaction_reference = transaction_reference;
 	}
 
-	public int getTransaction_fees() {
+	public float getTransaction_fees() {
 		return transaction_fees;
 	}
 
-	public void setTransaction_fees(int transaction_fees) {
+	public void setTransaction_fees(float transaction_fees) {
 		this.transaction_fees = transaction_fees;
 	}
 
@@ -174,19 +180,19 @@ public class SMS {
 		this.tenant = tenant;
 	}
 
-	public int getTransaction_amount() {
+	public float getTransaction_amount() {
 		return transaction_amount;
 	}
 
-	public void setTransaction_amount(int transaction_amount) {
+	public void setTransaction_amount(float transaction_amount) {
 		this.transaction_amount = transaction_amount;
 	}
 
-	public int getTransaction_balance() {
+	public float getTransaction_balance() {
 		return transaction_balance;
 	}
 
-	public void setTransaction_balance(int transaction_balance) {
+	public void setTransaction_balance(float transaction_balance) {
 		this.transaction_balance = transaction_balance;
 	}
 
@@ -214,6 +220,38 @@ public class SMS {
 		this.is_online_saved = is_online_saved;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getTaxpayernumber() {
+		return taxpayernumber;
+	}
+
+	public void setTaxpayernumber(String taxpayernumber) {
+		this.taxpayernumber = taxpayernumber;
+	}
+
+	public String getNumbertraderegister() {
+		return numbertraderegister;
+	}
+
+	public void setNumbertraderegister(String numbertraderegister) {
+		this.numbertraderegister = numbertraderegister;
+	}
+
 	@Override
 	public String toString() {
 		return "SMS{" +
@@ -234,10 +272,15 @@ public class SMS {
 				", sms_receiver='" + sms_receiver + '\'' +
 				", belongs_to='" + belongs_to + '\'' +
 				", tenant='" + tenant + '\'' +
+				", email='" + email + '\'' +
+				", phone='" + phone + '\'' +
+				", taxpayernumber='" + taxpayernumber + '\'' +
+				", numbertraderegister='" + numbertraderegister + '\'' +
 				", transaction_amount=" + transaction_amount +
 				", transaction_balance=" + transaction_balance +
 				", is_yet_printed=" + is_yet_printed +
 				", transaction_fees=" + transaction_fees +
+				", is_online_saved=" + is_online_saved +
 				'}';
 	}
 }

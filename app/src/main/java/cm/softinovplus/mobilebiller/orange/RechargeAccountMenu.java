@@ -202,9 +202,10 @@ public class RechargeAccountMenu extends AppCompatActivity {
                 }                 try {
                     Log.e("URL", str_url);
                     //urlConnection = (HttpURLConnection) url.openConnection();
+                    SharedPreferences sharedPreferences = getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
                     urlConnection.setRequestMethod("GET");
                     urlConnection.setDoInput(true);
-                    urlConnection.setRequestProperty (Utils.AUTHORIZATION, Utils.BEARER + " " + this.access_token);
+                    urlConnection.setRequestProperty (Utils.AUTHORIZATION, Utils.BEARER + " " + sharedPreferences.getString(Utils.ACCESS_TOKEN, ""));
 
                     this.statusCode = urlConnection.getResponseCode();
                     Log.e("statusCode", "4: " + statusCode);
@@ -490,7 +491,8 @@ public class RechargeAccountMenu extends AppCompatActivity {
                     editor.apply();
                     GetBalance getBalance = new GetBalance(RechargeAccountMenu.this, balanceloader,
                             preferencesAuth.getString(Utils.EMAIL, "Error@Error.cm"), jsonObject.getString(Utils.ACCESS_TOKEN));
-                    getBalance.execute(Utils.HOST_WALLET + "api/mobilebillercreditaccounts/" + preferencesAuth.getString(Utils.USERID,"") + "?query=balance");
+                    getBalance.execute(Utils.HOST_WALLET + "api/mobilebillercreditaccounts/" + preferencesAuth.getString(Utils.USERID,"") + "?query=balance&scope=SCOPE_READ_WALLET");
+
                 }else{
                 }
 

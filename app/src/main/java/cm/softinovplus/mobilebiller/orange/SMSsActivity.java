@@ -18,7 +18,7 @@ import cm.softinovplus.mobilebiller.orange.sms.SMS;
 
 public class SMSsActivity extends AppCompatActivity {
 
-    private List<SMS> smses;
+    //private List<SMS> smses;
     private  static ListView listView;
     private MySMSAdapter adapter;
     public static AppCompatActivity thisActivity;

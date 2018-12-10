@@ -1,5 +1,6 @@
 package cm.softinovplus.mobilebiller.orange.receivers;
 
+import android.app.ActivityOptions;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -54,10 +55,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
+import cm.softinovplus.mobilebiller.orange.Authenticated;
 import cm.softinovplus.mobilebiller.orange.ChangePassword;
 import cm.softinovplus.mobilebiller.orange.PrintNewSMS;
 import cm.softinovplus.mobilebiller.orange.R;
 import cm.softinovplus.mobilebiller.orange.SMSsActivity;
+import cm.softinovplus.mobilebiller.orange.Welcome;
 import cm.softinovplus.mobilebiller.orange.db.MySQLiteHelper;
 import cm.softinovplus.mobilebiller.orange.db.SMSDataSource;
 import cm.softinovplus.mobilebiller.orange.sms.SMS;
@@ -163,171 +166,666 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
 
             boolean booleen = false;
-            JSONArray jsonArray = null;//Utils.keysPatterns();
+            //JSONArray jsonArray = null;//Utils.keysPatterns();
             try {
 
                 Log.e("TEST111111111111", "Before APP_CONFIGURAION " + context.getPackageCodePath() + "    " + context.getPackageName() + "    " + context.getPackageResourcePath());
                 SharedPreferences mysp = context.getApplicationContext().getSharedPreferences(Utils.APP_CONFIGURAION, MODE_PRIVATE);
                 Log.e("TEST22222222222", "After APP_CONFIGURAION");
-                jsonArray = new JSONArray(mysp.getString(Utils.REMOTE_REGULAREXPRESSION,""));
+                JSONObject jsonObject0 = new JSONObject(mysp.getString(Utils.REMOTE_REGULAREXPRESSION,""));
+
+                JSONObject mtncameroon = jsonObject0.getJSONObject(Utils.MTNCAMEROON);
+                JSONArray frenchversion_mtncameroon = mtncameroon.getJSONArray(Utils.FRENCHVERSION);
+
+                //jsonArray_mtncameroon = new JSONArray(mysp.getString(Utils.REMOTE_REGULAREXPRESSION,""));
                 Log.e("TEST33333333333333", "After APP_CONFIGURAION");
 
-            for (int i = 0; i<jsonArray.length(); i++){
-                try {
-                    JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-                    Log.e("MATCHER", jsonObject.getString(Utils.KEYWORDPATTERN) + "\n\n" + this.sms_body);
-                    Matcher matcher1 = Pattern.compile(jsonObject.getString(Utils.KEYWORDPATTERN), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
-                    if (matcher1.find()){
-                        Log.e("FOUND", "OKOKOK\n\n\n" + jsonObject + "\n\n\n");
-                        Matcher matcher = Pattern.compile(jsonObject.getString(Utils.REGULAREXPRESSION), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
-                        if (matcher.find()){
-                            Log.e("FOUND", "YES YES YES YES");
-                            if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Transfert de fond")){
-                                Log.e("1", matcher.group(2));
-
-                                /*"(\\w+)\\s+de\\s+(\\d+)\\s+(\\w+)\\s+effectue\\s+avec\\s+(\\w+)" +
-                                        "\\s+a\\s+(\\w+)((\\s+\\w+)*)\\s+\\((\\d+)\\)\\s+le\\s+(\\d{4})\\-(\\d{2})\\-(\\d{2})\\s+(\\d{2}):(\\d{2}):(\\d{2})\\." +
-                                        "\\s+FRAIS\\s+(\\d+)\\s+\\w+\\.\\s+Transaction\\s+Id:\\s+(\\d+)\\s+(;|,)\\s+Reference:(.+)\\.\\s+Nouveau\\s+solde\\s+est:\\s+(\\d+)\\s(\\w+)\\."
-
-                                "Transfert de 100000 FCFA effectue avec succes a DIDIER JUNIOR NKALLA EHAWE (237671747569) Le 2018-09-26 09:30:45. " +
-                                        "Frais 250 FCFA. Transaction Id: 395587665 , Reference: . Nouveau solde est: 330000 FCFA."*/
-                                transaction_type = "Transfert de fond";//matcher.group(2);
-                                transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
-                                transaction_currency = matcher.group(3);
-                                transaction_state = matcher.group(4);
-                                transaction_beneficiary_name = matcher.group(5) + matcher.group(6);
-                                transaction_beneficiary_account_number = matcher.group(8);
-                                transaction_date = matcher.group(9)+"-" + matcher.group(10) + "-" + matcher.group(11) + " " + matcher.group(12) + ":" + matcher.group(13) + ":" + matcher.group(14);
-                                transaction_fees = matcher.group(15)==null?"0":matcher.group(15);
-                                transaction_id = matcher.group(16);
-                                transaction_reference = matcher.group(18);
-                                transaction_balance = matcher.group(19) == null?"0":matcher.group(19);
-                                SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
-                                transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
-                                booleen = true;
-                                Log.e("FOUND", "YES YES YES YES 1");
-                            }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais de Scolarite")){
-                                transaction_type = "Paiement de Frais de Scolarite";//matcher.group(2);
-                                transaction_amount = matcher.group(13) == null ? "0":matcher.group(13);
-                                transaction_currency = matcher.group(14);
-                                transaction_state = "Succes";
-                                transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
-                                transaction_beneficiary_account_number = "NA";
-                                transaction_date = matcher.group(12);
-                                transaction_fees = "0";
-                                transaction_id = matcher.group(15);
-                                transaction_reference = matcher.group(15);
-                                transaction_balance = "0";
-                                String additional = (matcher.group(2) == null)?"":matcher.group(2);
-                                transaction_made_by = matcher.group(1) + additional;
-                                booleen = true;
-                                Log.e("FOUND", "YES YES YES YES 2");
-                            }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais d'examen")){
-                                transaction_type = "Paiement de Frais d'examen";//matcher.group(2);
-                                transaction_amount = (matcher.group(15) == null)? "0":matcher.group(15);
-                                transaction_currency = matcher.group(16);
-                                transaction_state = "Succes";
-                                transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + " " + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
-                                transaction_beneficiary_account_number = "NA";
-                                transaction_date = matcher.group(14);
-                                transaction_fees = "0";
-                                transaction_id = matcher.group(17);
-                                transaction_reference = matcher.group(17);
-                                transaction_balance = "0";
-                                String additional = (matcher.group(2) == null)?"":matcher.group(2);
-                                transaction_made_by = matcher.group(1) + additional;
-                                booleen = true;
-                                Log.e("FOUND", "YES YES YES YES 3");
-                            }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Retrait")){
-                                transaction_type = "Retrait";//matcher.group(2);
-                                transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
-                                transaction_currency = matcher.group(3);
-                                transaction_state = "Succes";
-                                transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5);
-                                transaction_beneficiary_account_number = "NA";
-                                transaction_date = matcher.group(7);
-                                transaction_fees = "0";
-                                transaction_id = "NA";
-                                transaction_reference = "NA";
-                                transaction_balance = matcher.group(9);;
-                                String additional = (matcher.group(2) == null)?"":matcher.group(2);
-                                transaction_made_by = matcher.group(4) + " " +  matcher.group(5);
-                                booleen = true;
-                                Log.e("FOUND", "YES YES YES YES 4");
-                            }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement")){
-                                transaction_type = "Paiement";//matcher.group(2);
-                                transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
-                                transaction_currency = matcher.group(2);
-                                transaction_state = "Succes";
-                                transaction_beneficiary_name = "NA";
-                                transaction_beneficiary_account_number = "NA";
-                                transaction_date = matcher.group(6);
-                                transaction_fees =  matcher.group(9);
-                                transaction_id =  matcher.group(11);
-                                transaction_reference = matcher.group(3) + matcher.group(4);
-                                transaction_balance = matcher.group(7);
-                                SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
-                                transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
-                                booleen = true;
-                                Log.e("FOUND", "YES YES YES YES 5");
-                            }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Recharge de credit")){
-                                transaction_type = "Recharge de credit";//matcher.group(2);
-                                transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
-                                transaction_currency = matcher.group(2);
-                                transaction_state = matcher.group(5);
-                                transaction_beneficiary_name = matcher.group(3);
-                                transaction_beneficiary_account_number = matcher.group(3);
-                                transaction_date = matcher.group(4);
-                                transaction_fees =  matcher.group(6);
-                                transaction_id =  "NA";
-                                transaction_reference = "NA";
-                                //String aa = (matcher.group(9) == null)?"":matcher.group(9);
-                                transaction_balance = matcher.group(8);
-                                SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
-                                transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
-                                booleen = true;
-                                Log.e("FOUND", "YES YES YES YES 6");
-                            }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Envoi de fond")){
-                                transaction_type = "Envoi de fond";//matcher.group(2);
-                                transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
-                                transaction_currency = matcher.group(2);
-                                transaction_state = "Succes";
-                                transaction_beneficiary_name = matcher.group(3) + matcher.group(4);
-                                transaction_beneficiary_account_number = matcher.group(6);
-                                transaction_date = matcher.group(7);
-                                transaction_fees =  "0";
-                                transaction_id =  matcher.group(11);
-                                transaction_reference = "NA";
-                                //String aa = (matcher.group(9) == null)?"":matcher.group(9);
-                                transaction_balance = matcher.group(9);
-                                SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
-                                transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
-                                booleen = true;
-                                Log.e("FOUND", "YES YES YES YES 7");
-                            }else{
-                                transaction_type = "NA";//matcher.group(2);
-                                transaction_amount = "0";
-                                transaction_currency = "NA";
-                                transaction_state = "NA";
-                                transaction_beneficiary_name = "NA";
-                                transaction_beneficiary_account_number = "NA";
-                                transaction_date = "NA";
-                                transaction_fees =  "0";
-                                transaction_id =  "NA";
-                                transaction_reference = "NA";
-                                transaction_balance = "0";
-                                transaction_made_by = "NA";
-                                booleen = false;
-                                Log.e("FOUND", "YES YES YES YES 8");
+                for (int i = 0; i<frenchversion_mtncameroon.length(); i++){
+                    try {
+                        JSONObject jsonObject = (JSONObject)frenchversion_mtncameroon.get(i);
+                        Log.e("MATCHER", jsonObject.getString(Utils.KEYWORDPATTERN) + "\n\n" + this.sms_body);
+                        Matcher matcher1 = Pattern.compile(jsonObject.getString(Utils.KEYWORDPATTERN), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                        if (matcher1.find()){
+                            Log.e("FOUND", "OKOKOK\n\n\n" + jsonObject + "\n\n\n");
+                            Matcher matcher = Pattern.compile(jsonObject.getString(Utils.REGULAREXPRESSION), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                            if (matcher.find()){
+                                Log.e("FOUND", "YES YES YES YES");
+                                if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Transfert de fond")){
+                                    Log.e("1", matcher.group(2));
+                                    transaction_type = "Transfert de fond";//matcher.group(2);
+                                    transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
+                                    transaction_currency = matcher.group(3);
+                                    transaction_state = matcher.group(4);
+                                    transaction_beneficiary_name = matcher.group(5) + matcher.group(6);
+                                    transaction_beneficiary_account_number = matcher.group(8);
+                                    transaction_date = matcher.group(9)+"-" + matcher.group(10) + "-" + matcher.group(11) + " " + matcher.group(12) + ":" + matcher.group(13) + ":" + matcher.group(14);
+                                    transaction_fees = matcher.group(15)==null?"0":matcher.group(15);
+                                    transaction_id = matcher.group(16);
+                                    transaction_reference = matcher.group(18);
+                                    transaction_balance = matcher.group(19) == null?"0":matcher.group(19);
+                                    SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                    transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                    booleen = true;
+                                    Log.e("FOUND", "YES YES YES YES 1");
+                                }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais de Scolarite")){
+                                    transaction_type = "Paiement de Frais de Scolarite";//matcher.group(2);
+                                    transaction_amount = matcher.group(13) == null ? "0":matcher.group(13);
+                                    transaction_currency = matcher.group(14);
+                                    transaction_state = "Succes";
+                                    transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                    transaction_beneficiary_account_number = "NA";
+                                    transaction_date = matcher.group(12);
+                                    transaction_fees = "0";
+                                    transaction_id = matcher.group(15);
+                                    transaction_reference = matcher.group(15);
+                                    transaction_balance = "0";
+                                    String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                    transaction_made_by = matcher.group(1) + additional;
+                                    booleen = true;
+                                    Log.e("FOUND", "YES YES YES YES 2");
+                                }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais d'examen")){
+                                    transaction_type = "Paiement de Frais d'examen";//matcher.group(2);
+                                    transaction_amount = (matcher.group(15) == null)? "0":matcher.group(15);
+                                    transaction_currency = matcher.group(16);
+                                    transaction_state = "Succes";
+                                    transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + " " + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                    transaction_beneficiary_account_number = "NA";
+                                    transaction_date = matcher.group(14);
+                                    transaction_fees = "0";
+                                    transaction_id = matcher.group(17);
+                                    transaction_reference = matcher.group(17);
+                                    transaction_balance = "0";
+                                    String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                    transaction_made_by = matcher.group(1) + additional;
+                                    booleen = true;
+                                    Log.e("FOUND", "YES YES YES YES 3");
+                                }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Retrait")){
+                                    transaction_type = "Retrait";//matcher.group(2);
+                                    transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
+                                    transaction_currency = matcher.group(3);
+                                    transaction_state = "Succes";
+                                    transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5);
+                                    transaction_beneficiary_account_number = "NA";
+                                    transaction_date = matcher.group(7);
+                                    transaction_fees = "0";
+                                    transaction_id = "NA";
+                                    transaction_reference = "NA";
+                                    transaction_balance = matcher.group(9);;
+                                    String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                    transaction_made_by = matcher.group(4) + " " +  matcher.group(5);
+                                    booleen = true;
+                                    Log.e("FOUND", "YES YES YES YES 4");
+                                }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement")){
+                                    transaction_type = "Paiement";//matcher.group(2);
+                                    transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                    transaction_currency = matcher.group(2);
+                                    transaction_state = "Succes";
+                                    transaction_beneficiary_name = "NA";
+                                    transaction_beneficiary_account_number = "NA";
+                                    transaction_date = matcher.group(6);
+                                    transaction_fees =  matcher.group(9);
+                                    transaction_id =  matcher.group(11);
+                                    transaction_reference = matcher.group(3) + matcher.group(4);
+                                    transaction_balance = matcher.group(7);
+                                    SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                    transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                    booleen = true;
+                                    Log.e("FOUND", "YES YES YES YES 5");
+                                }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Recharge de credit")){
+                                    transaction_type = "Recharge de credit";//matcher.group(2);
+                                    transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                    transaction_currency = matcher.group(2);
+                                    transaction_state = matcher.group(5);
+                                    transaction_beneficiary_name = matcher.group(3);
+                                    transaction_beneficiary_account_number = matcher.group(3);
+                                    transaction_date = matcher.group(4);
+                                    transaction_fees =  matcher.group(6);
+                                    transaction_id =  "NA";
+                                    transaction_reference = "NA";
+                                    transaction_balance = matcher.group(8);
+                                    SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                    transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                    booleen = true;
+                                    Log.e("FOUND", "YES YES YES YES 6");
+                                }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Envoi de fond")){
+                                    transaction_type = "Envoi de fond";//matcher.group(2);
+                                    transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                    transaction_currency = matcher.group(2);
+                                    transaction_state = "Succes";
+                                    transaction_beneficiary_name = matcher.group(3) + matcher.group(4);
+                                    transaction_beneficiary_account_number = matcher.group(6);
+                                    transaction_date = matcher.group(7);
+                                    transaction_fees =  "0";
+                                    transaction_id =  matcher.group(11);
+                                    transaction_reference = "NA";
+                                    //String aa = (matcher.group(9) == null)?"":matcher.group(9);
+                                    transaction_balance = matcher.group(9);
+                                    SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                    transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                    booleen = true;
+                                    Log.e("FOUND", "YES YES YES YES 7");
+                                }else{
+                                    transaction_type = "NA";//matcher.group(2);
+                                    transaction_amount = "0";
+                                    transaction_currency = "NA";
+                                    transaction_state = "NA";
+                                    transaction_beneficiary_name = "NA";
+                                    transaction_beneficiary_account_number = "NA";
+                                    transaction_date = "NA";
+                                    transaction_fees =  "0";
+                                    transaction_id =  "NA";
+                                    transaction_reference = "NA";
+                                    transaction_balance = "0";
+                                    transaction_made_by = "NA";
+                                    booleen = false;
+                                    Log.e("FOUND", "YES YES YES YES 8");
+                                }
                             }
+                            break;
                         }
-                        break;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-            Log.e("booleen", "" + booleen);
+
+                if (!booleen){
+                    JSONArray englishversion_mtncameroon = mtncameroon.getJSONArray(Utils.ENGLISHVERSION);
+
+                    for (int i = 0; i<englishversion_mtncameroon.length(); i++){
+                        try {
+                            JSONObject jsonObject = (JSONObject)englishversion_mtncameroon.get(i);
+                            Log.e("MATCHER", jsonObject.getString(Utils.KEYWORDPATTERN) + "\n\n" + this.sms_body);
+                            Matcher matcher1 = Pattern.compile(jsonObject.getString(Utils.KEYWORDPATTERN), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                            if (matcher1.find()){
+                                Log.e("FOUND", "OKOKOK\n\n\n" + jsonObject + "\n\n\n");
+                                Matcher matcher = Pattern.compile(jsonObject.getString(Utils.REGULAREXPRESSION), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                                if (matcher.find()){
+                                    Log.e("FOUND", "YES YES YES YES");
+                                    if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Transfert de fond")){
+                                        Log.e("1", matcher.group(2));
+                                        transaction_type = "Transfert de fond";//matcher.group(2);
+                                        transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
+                                        transaction_currency = matcher.group(3);
+                                        transaction_state = matcher.group(4);
+                                        transaction_beneficiary_name = matcher.group(5) + matcher.group(6);
+                                        transaction_beneficiary_account_number = matcher.group(8);
+                                        transaction_date = matcher.group(9)+"-" + matcher.group(10) + "-" + matcher.group(11) + " " + matcher.group(12) + ":" + matcher.group(13) + ":" + matcher.group(14);
+                                        transaction_fees = matcher.group(15)==null?"0":matcher.group(15);
+                                        transaction_id = matcher.group(16);
+                                        transaction_reference = matcher.group(18);
+                                        transaction_balance = matcher.group(19) == null?"0":matcher.group(19);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 1");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais de Scolarite")){
+                                        transaction_type = "Paiement de Frais de Scolarite";//matcher.group(2);
+                                        transaction_amount = matcher.group(13) == null ? "0":matcher.group(13);
+                                        transaction_currency = matcher.group(14);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(12);
+                                        transaction_fees = "0";
+                                        transaction_id = matcher.group(15);
+                                        transaction_reference = matcher.group(15);
+                                        transaction_balance = "0";
+                                        String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                        transaction_made_by = matcher.group(1) + additional;
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 2");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais d'examen")){
+                                        transaction_type = "Paiement de Frais d'examen";//matcher.group(2);
+                                        transaction_amount = (matcher.group(15) == null)? "0":matcher.group(15);
+                                        transaction_currency = matcher.group(16);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + " " + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(14);
+                                        transaction_fees = "0";
+                                        transaction_id = matcher.group(17);
+                                        transaction_reference = matcher.group(17);
+                                        transaction_balance = "0";
+                                        String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                        transaction_made_by = matcher.group(1) + additional;
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 3");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Retrait")){
+                                        transaction_type = "Retrait";//matcher.group(2);
+                                        transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
+                                        transaction_currency = matcher.group(3);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5);
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(7);
+                                        transaction_fees = "0";
+                                        transaction_id = "NA";
+                                        transaction_reference = "NA";
+                                        transaction_balance = matcher.group(9);;
+                                        String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                        transaction_made_by = matcher.group(4) + " " +  matcher.group(5);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 4");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement")){
+                                        transaction_type = "Paiement";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = "NA";
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(6);
+                                        transaction_fees =  matcher.group(9);
+                                        transaction_id =  matcher.group(11);
+                                        transaction_reference = matcher.group(3) + matcher.group(4);
+                                        transaction_balance = matcher.group(7);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 5");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Recharge de credit")){
+                                        transaction_type = "Recharge de credit";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = matcher.group(5);
+                                        transaction_beneficiary_name = matcher.group(3);
+                                        transaction_beneficiary_account_number = matcher.group(3);
+                                        transaction_date = matcher.group(4);
+                                        transaction_fees =  matcher.group(6);
+                                        transaction_id =  "NA";
+                                        transaction_reference = "NA";
+                                        //String aa = (matcher.group(9) == null)?"":matcher.group(9);
+                                        transaction_balance = matcher.group(8);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 6");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Envoi de fond")){
+                                        transaction_type = "Envoi de fond";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(3) + matcher.group(4);
+                                        transaction_beneficiary_account_number = matcher.group(6);
+                                        transaction_date = matcher.group(7);
+                                        transaction_fees =  "0";
+                                        transaction_id =  matcher.group(11);
+                                        transaction_reference = "NA";
+                                        //String aa = (matcher.group(9) == null)?"":matcher.group(9);
+                                        transaction_balance = matcher.group(9);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 7");
+                                    }else{
+                                        transaction_type = "NA";//matcher.group(2);
+                                        transaction_amount = "0";
+                                        transaction_currency = "NA";
+                                        transaction_state = "NA";
+                                        transaction_beneficiary_name = "NA";
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = "NA";
+                                        transaction_fees =  "0";
+                                        transaction_id =  "NA";
+                                        transaction_reference = "NA";
+                                        transaction_balance = "0";
+                                        transaction_made_by = "NA";
+                                        booleen = false;
+                                        Log.e("FOUND", "YES YES YES YES 8");
+                                    }
+                                }
+                                break;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                if (!booleen){
+                    JSONObject orangecameroon = jsonObject0.getJSONObject(Utils.ORANGECAMEROON);
+                    JSONArray frenchversion_orangecameroon = orangecameroon.getJSONArray(Utils.FRENCHVERSION);
+
+                    for (int i = 0; i<frenchversion_orangecameroon.length(); i++){
+                        try {
+                            JSONObject jsonObject = (JSONObject)frenchversion_orangecameroon.get(i);
+                            Log.e("MATCHER", jsonObject.getString(Utils.KEYWORDPATTERN) + "\n\n" + this.sms_body);
+                            Matcher matcher1 = Pattern.compile(jsonObject.getString(Utils.KEYWORDPATTERN), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                            if (matcher1.find()){
+                                Log.e("FOUND", "OKOKOK\n\n\n" + jsonObject + "\n\n\n");
+                                Matcher matcher = Pattern.compile(jsonObject.getString(Utils.REGULAREXPRESSION), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                                if (matcher.find()){
+                                    Log.e("FOUND", "YES YES YES YES");
+                                    if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Transfert de fond")){
+                                        Log.e("1", matcher.group(2));
+
+                                        transaction_type = "Transfert de fond";//matcher.group(2);
+                                        transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
+                                        transaction_currency = matcher.group(3);
+                                        transaction_state = matcher.group(4);
+                                        transaction_beneficiary_name = matcher.group(5) + matcher.group(6);
+                                        transaction_beneficiary_account_number = matcher.group(8);
+                                        transaction_date = matcher.group(9)+"-" + matcher.group(10) + "-" + matcher.group(11) + " " + matcher.group(12) + ":" + matcher.group(13) + ":" + matcher.group(14);
+                                        transaction_fees = matcher.group(15)==null?"0":matcher.group(15);
+                                        transaction_id = matcher.group(16);
+                                        transaction_reference = matcher.group(18);
+                                        transaction_balance = matcher.group(19) == null?"0":matcher.group(19);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 1");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais de Scolarite")){
+                                        transaction_type = "Paiement de Frais de Scolarite";//matcher.group(2);
+                                        transaction_amount = matcher.group(13) == null ? "0":matcher.group(13);
+                                        transaction_currency = matcher.group(14);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(12);
+                                        transaction_fees = "0";
+                                        transaction_id = matcher.group(15);
+                                        transaction_reference = matcher.group(15);
+                                        transaction_balance = "0";
+                                        String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                        transaction_made_by = matcher.group(1) + additional;
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 2");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais d'examen")){
+                                        transaction_type = "Paiement de Frais d'examen";//matcher.group(2);
+                                        transaction_amount = (matcher.group(15) == null)? "0":matcher.group(15);
+                                        transaction_currency = matcher.group(16);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + " " + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(14);
+                                        transaction_fees = "0";
+                                        transaction_id = matcher.group(17);
+                                        transaction_reference = matcher.group(17);
+                                        transaction_balance = "0";
+                                        String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                        transaction_made_by = matcher.group(1) + additional;
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 3");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Retrait")){
+                                        transaction_type = "Retrait";//matcher.group(2);
+                                        transaction_amount = matcher.group(12) == null ? "0":matcher.group(12);
+                                        transaction_currency = matcher.group(14);
+                                        transaction_state = matcher.group(2);
+                                        String additionnel = (matcher.group(9) == null)?"":matcher.group(9);
+                                        transaction_beneficiary_name = matcher.group(8) + " " + additionnel;
+                                        transaction_beneficiary_account_number = matcher.group(7);
+                                        transaction_date = "" + Utils.makeDateDate(System.currentTimeMillis());
+                                        transaction_fees = matcher.group(15) == null ? "0":matcher.group(15);
+                                        transaction_id = matcher.group(11) == null ? "0":matcher.group(11);;
+                                        transaction_reference = "NA";
+                                        transaction_balance = matcher.group(24);;
+                                        String additional = (matcher.group(5) == null)?"":matcher.group(5);
+                                        transaction_made_by = matcher.group(4) + " " +  additional  + " (Tel: " + matcher.group(3) +")";
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 4");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Depot")){
+                                        transaction_type = "Depot";//matcher.group(2);
+                                        transaction_amount = matcher.group(14) == null ? "0":matcher.group(14);
+                                        transaction_currency = matcher.group(16);
+                                        transaction_state = matcher.group(7);
+                                        String additionnel = (matcher.group(5) == null)?"":matcher.group(5);
+                                        transaction_beneficiary_name = matcher.group(4) + " " + additionnel;
+                                        transaction_beneficiary_account_number = matcher.group(3);
+                                        transaction_date = "" + Utils.makeDateDate(System.currentTimeMillis());
+                                        transaction_fees = matcher.group(17) == null ? "0":matcher.group(17);
+                                        transaction_id = matcher.group(13) == null ? "0":matcher.group(13);;
+                                        transaction_reference = "NA";
+                                        transaction_balance = matcher.group(26);;
+                                        String additional = (matcher.group(11) == null)?"":matcher.group(11);
+                                        transaction_made_by = matcher.group(10) + " " +  additional  + " (Tel: " + matcher.group(9) +")";
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 4");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement")){
+                                        transaction_type = "Paiement";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = "NA";
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(6);
+                                        transaction_fees =  matcher.group(9);
+                                        transaction_id =  matcher.group(11);
+                                        transaction_reference = matcher.group(3) + matcher.group(4);
+                                        transaction_balance = matcher.group(7);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 5");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Recharge de credit")){
+                                        transaction_type = "Recharge de credit";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = matcher.group(5);
+                                        transaction_beneficiary_name = matcher.group(3);
+                                        transaction_beneficiary_account_number = matcher.group(3);
+                                        transaction_date = matcher.group(4);
+                                        transaction_fees =  matcher.group(6);
+                                        transaction_id =  "NA";
+                                        transaction_reference = "NA";
+                                        //String aa = (matcher.group(9) == null)?"":matcher.group(9);
+                                        transaction_balance = matcher.group(8);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 6");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Envoi de fond")){
+                                        transaction_type = "Envoi de fond";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(3) + matcher.group(4);
+                                        transaction_beneficiary_account_number = matcher.group(6);
+                                        transaction_date = matcher.group(7);
+                                        transaction_fees =  "0";
+                                        transaction_id =  matcher.group(11);
+                                        transaction_reference = "NA";
+                                        //String aa = (matcher.group(9) == null)?"":matcher.group(9);
+                                        transaction_balance = matcher.group(9);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 7");
+                                    }else{
+                                        transaction_type = "NA";//matcher.group(2);
+                                        transaction_amount = "0";
+                                        transaction_currency = "NA";
+                                        transaction_state = "NA";
+                                        transaction_beneficiary_name = "NA";
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = "NA";
+                                        transaction_fees =  "0";
+                                        transaction_id =  "NA";
+                                        transaction_reference = "NA";
+                                        transaction_balance = "0";
+                                        transaction_made_by = "NA";
+                                        booleen = false;
+                                        Log.e("FOUND", "YES YES YES YES 8");
+                                    }
+                                }
+                                break;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+                if (!booleen){
+                    JSONObject orangecameroon = jsonObject0.getJSONObject(Utils.ORANGECAMEROON);
+                    JSONArray englishversion_orangecameroon = orangecameroon.getJSONArray(Utils.ENGLISHVERSION);
+
+                    for (int i = 0; i<englishversion_orangecameroon.length(); i++){
+                        try {
+                            JSONObject jsonObject = (JSONObject)englishversion_orangecameroon.get(i);
+                            Log.e("MATCHER", jsonObject.getString(Utils.KEYWORDPATTERN) + "\n\n" + this.sms_body);
+                            Matcher matcher1 = Pattern.compile(jsonObject.getString(Utils.KEYWORDPATTERN), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                            if (matcher1.find()){
+                                Log.e("FOUND", "OKOKOK\n\n\n" + jsonObject + "\n\n\n");
+                                Matcher matcher = Pattern.compile(jsonObject.getString(Utils.REGULAREXPRESSION), Pattern.CASE_INSENSITIVE).matcher(this.sms_body);
+                                if (matcher.find()){
+                                    Log.e("FOUND", "YES YES YES YES");
+                                    if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Transfert de fond")){
+                                        Log.e("1", matcher.group(2));
+                                        transaction_type = "Transfert de fond";//matcher.group(2);
+                                        transaction_amount = matcher.group(2) == null ? "0":matcher.group(2);
+                                        transaction_currency = matcher.group(3);
+                                        transaction_state = matcher.group(4);
+                                        transaction_beneficiary_name = matcher.group(5) + matcher.group(6);
+                                        transaction_beneficiary_account_number = matcher.group(8);
+                                        transaction_date = matcher.group(9)+"-" + matcher.group(10) + "-" + matcher.group(11) + " " + matcher.group(12) + ":" + matcher.group(13) + ":" + matcher.group(14);
+                                        transaction_fees = matcher.group(15)==null?"0":matcher.group(15);
+                                        transaction_id = matcher.group(16);
+                                        transaction_reference = matcher.group(18);
+                                        transaction_balance = matcher.group(19) == null?"0":matcher.group(19);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 1");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais de Scolarite")){
+                                        transaction_type = "Paiement de Frais de Scolarite";//matcher.group(2);
+                                        transaction_amount = matcher.group(13) == null ? "0":matcher.group(13);
+                                        transaction_currency = matcher.group(14);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(12);
+                                        transaction_fees = "0";
+                                        transaction_id = matcher.group(15);
+                                        transaction_reference = matcher.group(15);
+                                        transaction_balance = "0";
+                                        String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                        transaction_made_by = matcher.group(1) + additional;
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 2");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement de Frais d'examen")){
+                                        transaction_type = "Paiement de Frais d'examen";//matcher.group(2);
+                                        transaction_amount = (matcher.group(15) == null)? "0":matcher.group(15);
+                                        transaction_currency = matcher.group(16);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(4) + " " +  matcher.group(5) + " " + matcher.group(6) + " " + matcher.group(7) + " " + matcher.group(8);
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(14);
+                                        transaction_fees = "0";
+                                        transaction_id = matcher.group(17);
+                                        transaction_reference = matcher.group(17);
+                                        transaction_balance = "0";
+                                        String additional = (matcher.group(2) == null)?"":matcher.group(2);
+                                        transaction_made_by = matcher.group(1) + additional;
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 3");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Retrait")){
+                                        transaction_type = "Retrait";//matcher.group(2);
+                                        transaction_amount = matcher.group(12) == null ? "0":matcher.group(12);
+                                        transaction_currency = matcher.group(14);
+                                        transaction_state = matcher.group(2);
+                                        transaction_beneficiary_name = matcher.group(8);
+                                        transaction_beneficiary_account_number = matcher.group(7);
+                                        transaction_date = "" + Utils.makeDateDate(System.currentTimeMillis());
+                                        transaction_fees = matcher.group(15) == null ? "0":matcher.group(15);
+                                        transaction_id = matcher.group(11) == null ? "0":matcher.group(11);;
+                                        transaction_reference = "NA";
+                                        transaction_balance = matcher.group(24);;
+                                        String additional = (matcher.group(5) == null)?"":matcher.group(5);
+                                        transaction_made_by = matcher.group(4) + " " +  additional + " (Tel: " + matcher.group(3) +")";
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 4");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Depot")){
+                                        transaction_type = "Depot";//matcher.group(2);
+                                        transaction_amount = matcher.group(14) == null ? "0":matcher.group(14);
+                                        transaction_currency = matcher.group(16);
+                                        transaction_state = matcher.group(7);
+                                        String additionnel = (matcher.group(5) == null)?"":matcher.group(5);
+                                        transaction_beneficiary_name = matcher.group(4) + " " + additionnel;
+                                        transaction_beneficiary_account_number = matcher.group(3);
+                                        transaction_date = "" + Utils.makeDateDate(System.currentTimeMillis());
+                                        transaction_fees = matcher.group(17) == null ? "0":matcher.group(17);
+                                        transaction_id = matcher.group(13) == null ? "0":matcher.group(13);;
+                                        transaction_reference = "NA";
+                                        transaction_balance = matcher.group(26);;
+                                        String additional = (matcher.group(11) == null)?"":matcher.group(11);
+                                        transaction_made_by = matcher.group(10) + " " +  additional + " (Tel: " + matcher.group(9) +")";
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 4");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Paiement")){
+                                        transaction_type = "Paiement";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = "NA";
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = matcher.group(6);
+                                        transaction_fees =  matcher.group(9);
+                                        transaction_id =  matcher.group(11);
+                                        transaction_reference = matcher.group(3) + matcher.group(4);
+                                        transaction_balance = matcher.group(7);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 5");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Recharge de credit")){
+                                        transaction_type = "Recharge de credit";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = matcher.group(5);
+                                        transaction_beneficiary_name = matcher.group(3);
+                                        transaction_beneficiary_account_number = matcher.group(3);
+                                        transaction_date = matcher.group(4);
+                                        transaction_fees =  matcher.group(6);
+                                        transaction_id =  "NA";
+                                        transaction_reference = "NA";
+                                        //String aa = (matcher.group(9) == null)?"":matcher.group(9);
+                                        transaction_balance = matcher.group(8);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 6");
+                                    }else if (jsonObject.getString(Utils.TRANSACTIONTYPE).equals("Envoi de fond")){
+                                        transaction_type = "Envoi de fond";//matcher.group(2);
+                                        transaction_amount = matcher.group(1) == null ? "0":matcher.group(1);
+                                        transaction_currency = matcher.group(2);
+                                        transaction_state = "Succes";
+                                        transaction_beneficiary_name = matcher.group(3) + matcher.group(4);
+                                        transaction_beneficiary_account_number = matcher.group(6);
+                                        transaction_date = matcher.group(7);
+                                        transaction_fees =  "0";
+                                        transaction_id =  matcher.group(11);
+                                        transaction_reference = "NA";
+                                        //String aa = (matcher.group(9) == null)?"":matcher.group(9);
+                                        transaction_balance = matcher.group(9);
+                                        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                                        transaction_made_by = sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME);
+                                        booleen = true;
+                                        Log.e("FOUND", "YES YES YES YES 7");
+                                    }else{
+                                        transaction_type = "NA";//matcher.group(2);
+                                        transaction_amount = "0";
+                                        transaction_currency = "NA";
+                                        transaction_state = "NA";
+                                        transaction_beneficiary_name = "NA";
+                                        transaction_beneficiary_account_number = "NA";
+                                        transaction_date = "NA";
+                                        transaction_fees =  "0";
+                                        transaction_id =  "NA";
+                                        transaction_reference = "NA";
+                                        transaction_balance = "0";
+                                        transaction_made_by = "NA";
+                                        booleen = false;
+                                        Log.e("FOUND", "YES YES YES YES 8");
+                                    }
+                                }
+                                break;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+                Log.e("booleen", "" + booleen);
             } catch (JSONException e) {
 
                 Log.e("VOILAAAAAAAAAAAAA", "VOILAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -342,23 +840,24 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                 Log.e("NUMBERS-NUMBERS", "" + this.transaction_amount + ", " + this.transaction_fees + ", " + this.transaction_balance);
 
                 SMS sms = smsDatatSource.createSMS(System.currentTimeMillis(),this.transaction_type,
-                        Integer.parseInt(this.transaction_amount.replaceAll("[\\-\\+\\.\\^:,]", "")),this.transaction_beneficiary_name,this.transaction_beneficiary_account_number,
-                        this.transaction_date, this.transaction_id, this.transaction_reference, Integer.parseInt(this.transaction_fees.replaceAll("[\\-\\+\\.\\^:,]", "")), this.transaction_state,
-                        Integer.parseInt(this.transaction_balance.replaceAll("[\\-\\+\\.\\^:,]", "")), this.transaction_currency,this.transaction_made_by ,this.sms_sender,
+                        Float.parseFloat(this.transaction_amount.replaceAll("[\\-\\+\\^:,]", "")),this.transaction_beneficiary_name,this.transaction_beneficiary_account_number,
+                        this.transaction_date, this.transaction_id, this.transaction_reference, Float.parseFloat(this.transaction_fees.replaceAll("[\\-\\+\\^:,]", "")), this.transaction_state,
+                        Float.parseFloat(this.transaction_balance.replaceAll("[\\-\\+\\^:,]", "")), this.transaction_currency,this.transaction_made_by ,this.sms_sender,
                         this.sms_sent_date, this.sms_body, this.sms_receiver,sharedPreferences.getString(Utils.TENANT_ID, Utils.DEFAULT_TENANT_ID),
-                        sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME), System.currentTimeMillis(), 0, 0);
-
-                SharedPreferences.Editor editor = context.getApplicationContext().getSharedPreferences(Utils.APP_CONFIGURAION, MODE_PRIVATE).edit();
-                editor.putLong(Utils.LAST_SMS_ID, sms.getId());
-                editor.apply();
-
+                        sharedPreferences.getString(Utils.TENANT_NAME,Utils.DEFAULT_TENANT_NAME), System.currentTimeMillis(), 0, 0,
+                        sharedPreferences.getString(Utils.EMAIL, ""), sharedPreferences.getString(Utils.PHONE, ""),
+                        sharedPreferences.getString(Utils.TAXPAYERNUMBER, ""), sharedPreferences.getString(Utils.NUMBERTRADEREGISTER, ""));
                 smsDatatSource.close();
+                /*SharedPreferences.Editor editor = context.getApplicationContext().getSharedPreferences(Utils.APP_CONFIGURAION, MODE_PRIVATE).edit();
+                editor.putLong(Utils.LAST_SMS_ID, sms.getId());
+                editor.apply();*/
+
 
                 if (SMSsActivity.thisActivity != null){
                     SMSsActivity.refreshList();
                 }
 
-                String ticketAccessToken = sharedPreferences.getString(Utils.TICKET_ACCESS_TOKEN,"OK");
+                //String ticketAccessToken = sharedPreferences.getString(Utils.TICKET_ACCESS_TOKEN,"OK");
 
                     BeginSaveReceipt beginSaveReceipt = new BeginSaveReceipt(context, sms, Utils.TICKET_CLIENT_ID, Utils.TICKET_CLIENT_SECRET, Utils.TICKET_GRANT_TYPE);
                     beginSaveReceipt.execute(Utils.TICKET_ACCESS_TOKEN_END_POINT);
@@ -386,14 +885,27 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                 bigPictureStyle.setSummaryText(bigTitle);
                 bigPictureStyle.setBigContentTitle("Pour Impression par blutooth");
 
-
                 Intent notificationIntent  = null;
-                notificationIntent = new Intent(context.getApplicationContext(),PrintNewSMS.class);
+               // notificationIntent = new Intent(context.getApplicationContext(),PrintNewSMS.class);
 
+
+                SharedPreferences sharedPreferences1 = context.getApplicationContext().getSharedPreferences(Utils.APP_AUTHENTICATION, MODE_PRIVATE);
+                String username = sharedPreferences1.getString(Utils.USERNAME, null);
+                String password = sharedPreferences1.getString(Utils.PASSWORD, null);
+                String name = sharedPreferences1.getString(Utils.NAME, null);
+                String email = sharedPreferences1.getString(Utils.EMAIL, null);
+                String tenantid = sharedPreferences1.getString(Utils.TENANT_ID, null);
+                if (username != null & password != null & name != null & email != null &tenantid != null){
+                    notificationIntent = new Intent(context.getApplicationContext(), Authenticated.class);
+                    //notificationIntent.putExtra(Utils.COMING_FROM_NOTIFICATION, true);
+                    notificationIntent.putExtra(Utils.SMS_ID, sms.getId());
+                }else{
+                    notificationIntent = new Intent(context.getApplicationContext(), Welcome.class);
+                    notificationIntent.putExtra(Utils.SMS_ID, sms.getId());
+                }
                 Bundle data = new Bundle();
                 data.putLong(Utils.sms_id, sms.getId());
                 notificationIntent.putExtra(Utils.data, data);
-
                 notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                 //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,  PendingIntent.FLAG_UPDATE_CURRENT);
@@ -438,34 +950,6 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                 // notificationId is a unique int for each notification that you must define
                 notificationManager.notify(Utils.NOTIFICATION_ID ++, notification);
             }
-
-
-            /*Pattern pattern = Pattern.compile("(^(\\w+)\\s+de\\s+(\\d+)\\s+(\\w+)\\s+effectue\\s+avec\\s+(\\w+)\\s+a\\s+(\\w+)((\\s+\\w+)*)\\s+\\((\\d+)\\)\\s+le\\s+(\\d{4})\\-(\\d{2})\\-(\\d{2})\\s+(\\d{2}):(\\d{2}):(\\d{2})\\.\\s+FRAIS\\s+(\\d+)\\s+\\w+\\.\\s+Transaction\\s+Id:\\s+(\\d+)\\s+;\\s+Reference:\\s+(\\d+)\\.\\s+Nouveau\\s+solde\\s+est:\\s+(\\d+)\\s(\\w+)\\.$)|(.)");
-            Matcher matcher = pattern.matcher(this.sms_body);
-
-
-            if (matcher.find()){
-                Log.e("1", matcher.group(2));
-                transaction_type = matcher.group(2);
-                transaction_amount = matcher.group(3) == null ? "0":matcher.group(3);
-                transaction_currency = matcher.group(4);
-                transaction_state = matcher.group(5);
-                transaction_beneficiary_name = matcher.group(6) + matcher.group(7);
-                transaction_beneficiary_account_number = matcher.group(9);
-                transaction_date = matcher.group(10)+"-" + matcher.group(11) + "-" + matcher.group(12) + " " + matcher.group(13) + ":" + matcher.group(14) + ":" + matcher.group(15);
-                transaction_fees = matcher.group(16)==null?"0":matcher.group(16);
-                transaction_id = matcher.group(17);
-                transaction_reference = matcher.group(18);
-                transaction_balance = matcher.group(19) == null?"0":matcher.group(19);
-            }*/
-
-            /*
-            Save in DB
-             */
-
-
-
-            //}
         }
     }
 
