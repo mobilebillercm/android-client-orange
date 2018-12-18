@@ -191,11 +191,11 @@ public class SMSDataSource {
 		String [] params = {"" + id};
 		   int a  = database.update(MySQLiteHelper.TABLE_SMS, values, MySQLiteHelper.COLUMN_ID + "=?"  , params);
 
-		Log.e("UPDATE RETURNED", "" + a);
+		//Log.e("UPDATE RETURNED", "" + a);
 
-		SMS sms = getSMSById(id);
+		//SMS sms = getSMSById(id);
 
-		Log.e("SAVED SMS", sms.toString());
+		//Log.e("SAVED SMS", sms.toString());
 
 		   return (a==1);
 	  }

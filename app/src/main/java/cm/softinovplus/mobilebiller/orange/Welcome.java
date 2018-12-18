@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -28,10 +27,7 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import com.github.angads25.filepicker.view.FilePickerDialog;
-
 import cm.softinovplus.mobilebiller.orange.fragments.LoginFragment;
-import cm.softinovplus.mobilebiller.orange.fragments.SignUpFragment;
 import cm.softinovplus.mobilebiller.orange.receivers.NetworkListener;
 import cm.softinovplus.mobilebiller.orange.utils.Utils;
 
@@ -175,22 +171,15 @@ public class Welcome extends AppCompatActivity {
                 }
                 return;
             }
-            case FilePickerDialog.EXTERNAL_READ_PERMISSION_GRANT: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(SignUpFragment.dialogpicker!=null)
-                    {   //Show dialog if the read permission has been granted.
-                        SignUpFragment.dialogpicker.show();
-                    }
-                }
-                else {
-                    //Permission has not been granted. Notify the user.
-                    Toast.makeText(Welcome.this,"Permission is Required for getting list of files",Toast.LENGTH_SHORT).show();
-                }
-            }
             default:{
 
             }
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 

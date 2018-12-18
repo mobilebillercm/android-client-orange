@@ -26,6 +26,10 @@
         android:icon="@drawable/transaction"
         android:title="@string/mytransaction"/>
 
+    <item android:id="@+id/remote_receipt"
+        android:icon="@drawable/remote_work"
+        android:title="@string/online_receipt"/>
+
     <item android:id="@+id/deconnexion"
         android:icon="@drawable/logout"
         android:title="@string/deconnexion"/>

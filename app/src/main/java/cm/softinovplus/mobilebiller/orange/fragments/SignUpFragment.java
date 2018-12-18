@@ -7,9 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -22,11 +20,10 @@ import java.security.cert.CertificateFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.app.ActivityOptions;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -44,14 +41,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.github.angads25.filepicker.controller.DialogSelectionListener;
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +54,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
-import cm.softinovplus.mobilebiller.orange.Authenticated;
 import cm.softinovplus.mobilebiller.orange.R;
 import cm.softinovplus.mobilebiller.orange.Welcome;
 import cm.softinovplus.mobilebiller.orange.dialog.PolicyDialog;
@@ -83,8 +74,9 @@ public class SignUpFragment extends Fragment  {
     private String selectedRegion, logo_selected_path;
     private ArrayAdapter<CharSequence> adapter;
     private ProgressBar signup_loader;
-    public static DialogProperties properties;
-    public static FilePickerDialog dialogpicker;
+    private Uri logoUri;
+    private ImageView gv;
+
 
 
 
@@ -113,6 +105,7 @@ public class SignUpFragment extends Fragment  {
         edit_password = (EditText) view.findViewById(R.id.edit_password);
         edit_password_confirmation = (EditText) view.findViewById(R.id.edit_password_confirmation);
         edit_logo = (EditText) view.findViewById(R.id.edit_logo);
+        gv = view.findViewById(R.id.gv);
         edit_phone = (EditText) view.findViewById(R.id.edit_phone);
         edit_city = (EditText) view.findViewById(R.id.edit_city);
         signUpButton = (Button) view.findViewById(R.id.signupbtn);
@@ -138,9 +131,6 @@ public class SignUpFragment extends Fragment  {
         selectedRegion = adapter.getItem(0).toString();
         Log.e("selectedRegion", selectedRegion);
 
-        properties = new DialogProperties();
-        dialogpicker = new FilePickerDialog(getActivity(),properties);
-
         logo_selected_path = "";
 	}
 
@@ -165,8 +155,6 @@ public class SignUpFragment extends Fragment  {
                 // Pattern match for email id
                 Pattern p = Pattern.compile(Utils.REGEX_EMAIL);
                 Matcher m = p.matcher(email);
-
-
 
                 // Check if all strings are null or not
                 if (entreprise.equals("") || entreprise.length() == 0
@@ -225,30 +213,61 @@ public class SignUpFragment extends Fragment  {
         edit_logo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.e("onFocusChange", "onFocusChange " + hasFocus);
+                // Log.e("onFocusChange", "onFocusChange " + hasFocus);
                 if (hasFocus){
-                    properties.selection_mode = DialogConfigs.SINGLE_MODE;
-                    properties.selection_type = DialogConfigs.FILE_SELECT;
-                    properties.root = new File(DialogConfigs.DEFAULT_DIR);
-                    properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
-                    properties.offset = new File(DialogConfigs.DEFAULT_DIR);
-                    properties.extensions = null;
-                    dialogpicker.setTitle("Choisir un Logo");
-                    dialogpicker.setDialogSelectionListener(new DialogSelectionListener() {
-                        @Override
-                        public void onSelectedFilePaths(String[] files) {
-                            //files is the array of the paths of files selected by the Application User.
-                            logo_selected_path = files[0];
-                            String []vet = files[0].split("\\/");
-                            edit_logo.setText(vet[vet.length-1]);
-                            Log.e("FILE SELECTED", files[0]);
-                        }
-                    });
-                    dialogpicker.show();
+                    edit_logo.performClick();
                 }
             }
         });
+
+        edit_logo.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+                // browser.
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+                // Filter to only show results that can be "opened", such as a
+                // file (as opposed to a list of contacts or timezones)
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                // Filter to show only images, using the image MIME data type.
+                // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+                // To search for all documents available via installed storage providers,
+                // it would be "*/*".
+                intent.setType("image/*");
+
+                startActivityForResult(intent, Utils.READ_REQUEST_CODE);
+            }
+        });
 	}
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
+
+        if (requestCode == Utils.READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                Log.e("URI URI ", "Uri: " + uri.toString() + "\n\n\n" + uri.getPath() + "\n\n\n");
+                logoUri = uri;
+                ImageView gv =  view.findViewById(R.id.gv);
+                gv.setImageURI(uri);
+                logo_selected_path = uri.getPath();
+                edit_logo.setText(uri.getLastPathSegment());
+            }else{
+                Log.e("NULL NULL NULL ", "NULL DATA");
+            }
+        }
+
+    }
 
 	@Override
     public void onResume(){
@@ -451,15 +470,17 @@ public class SignUpFragment extends Fragment  {
 
                 try {
 
-                    File sourceFile = new File(this.logoPath);
-                    Log.e("ABSOLUTE PATH", sourceFile.getAbsolutePath());
-                    if (sourceFile.isFile()) {
+                    //File sourceFile = new File(this.logoPath);
+                    //Log.e("ABSOLUTE PATH", sourceFile.getAbsolutePath());
+                    //if (sourceFile.isFile()) {
 
                         Log.e("11111111111111",str_url + "(" + this.email + ", " + this.password + ")");
                         // open a URL connection to the Servlet
-                        FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                        //FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                    InputStream inputStream = getActivity().getContentResolver().openInputStream(logoUri) ;//new FileInputStream(sourceFile);
 
-                        Log.e("URL", str_url);
+
+                    Log.e("URL", str_url);
                         //urlConnection = (HttpURLConnection) url.openConnection();
                         urlConnection.setRequestMethod("POST");
                         urlConnection.setDoInput(true);
@@ -470,17 +491,17 @@ public class SignUpFragment extends Fragment  {
                         urlConnection.setRequestProperty("Connection", "Keep-Alive");
                         urlConnection.setRequestProperty("ENCTYPE", "multipart/form-data");
                         urlConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                        urlConnection.setRequestProperty("tenantlogo", sourceFile.getAbsolutePath());
+                        urlConnection.setRequestProperty("tenantlogo", logoUri.getPath());
                         dos = new DataOutputStream(urlConnection.getOutputStream());
                         dos.writeBytes(twoHyphens + boundary + lineEnd);
-                        dos.writeBytes("Content-Disposition: form-data; name=\""+"tenantlogo"+"\";filename=\"" +sourceFile.getAbsolutePath()+ "\"" + lineEnd);
+                        dos.writeBytes("Content-Disposition: form-data; name=\""+"tenantlogo"+"\";filename=\"" + logoUri.getPath()+ "\"" + lineEnd);
 
                         dos.writeBytes(lineEnd);
 
                         //Log.e("3333333333333333333333","333333333333333333333333333333333333333333333333");
 
                         // create a buffer of maximum size
-                        bytesAvailable = fileInputStream.available();
+                        bytesAvailable = inputStream.available();
 
 
 
@@ -488,15 +509,15 @@ public class SignUpFragment extends Fragment  {
                         buffer = new byte[bufferSize];
 
                         // read file and write it into form...
-                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                        bytesRead = inputStream.read(buffer, 0, bufferSize);
 
                         Log.e("bytesAvailable","" + bytesAvailable);
 
                         while (bytesRead > 0) {
                             dos.write(buffer, 0, bufferSize);
-                            bytesAvailable = fileInputStream.available();
+                            bytesAvailable = inputStream.available();
                             bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                            bytesRead = inputStream.read(buffer, 0, bufferSize);
                             Log.e("image size:::::::::::", "" + bufferSize);
                         }
 
@@ -564,7 +585,7 @@ public class SignUpFragment extends Fragment  {
                         }
                         in.close();
                         resultat = sb.toString();
-                    }
+                   // }
 
                 } catch (IOException e) {
                     //Log.e("Exception2", "2: " + e.getMessage());

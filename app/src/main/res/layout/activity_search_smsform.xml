@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+xmlns:tools="http://schemas.android.com/tools"
+android:background="@android:color/white"
+tools:context="cm.softinovplus.mobilebiller.orange.SearchSMSForm">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="-50dp"
+    android:id="@+id/logo_content"
+    android:layout_marginLeft="-50dp"
+    android:gravity="center_horizontal"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:paddingTop="0dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="-50dp"
+        android:layout_marginLeft="-50dp"
+        android:gravity="center_horizontal"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="15dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/mobilephone"
+            />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/bluetooth"
+            />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/printer"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryDark" />
+</LinearLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/progressbar_search"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:max="100"
+                android:progress="0"
+                android:backgroundTint="@color/white"
+                android:indeterminateTint="@color/mycolor"
+                android:layout_marginTop="7dp"
+                android:visibility="gone"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/mycolor"
+                android:text="@string/searching"
+                android:layout_below="@id/progressbar_search"
+                android:id="@+id/text_search_loader"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:visibility="gone"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text=""
+                android:textColor="#FF0000"
+                android:textScaleX="1"
+                android:textSize="14sp"
+                android:id="@+id/resultsearch"
+                android:layout_below="@id/text_search_loader"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/search_receipt"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginTop="20dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:id="@+id/titre"
+                android:layout_below="@id/resultsearch"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:layout_below="@id/titre"
+                android:layout_marginBottom="50dp"
+                >
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_keyword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp">
+
+                    <EditText
+                        android:id="@+id/key_word"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
+                        android:hint="@string/key_word"
+                        android:inputType="text"
+                        android:padding="10dp"
+                        android:textColor="@color/mycolor"
+                        android:textColorHint="@color/mycolor"
+                        android:layout_marginBottom="10dp"
+                        android:textScaleX="1"
+                        android:textSize="15sp"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_from"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp">
+
+                    <EditText
+                        android:id="@+id/from"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
+                        android:hint="@string/from"
+                        android:inputType="date"
+                        android:padding="10dp"
+                        android:textColor="@color/mycolor"
+                        android:textColorHint="@color/mycolor"
+                        android:layout_marginBottom="10dp"
+                        android:textScaleX="1"
+                        android:textSize="15sp"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_to"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp">
+
+                    <EditText
+                        android:id="@+id/to"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
+                        android:hint="@string/to"
+                        android:inputType="date"
+                        android:padding="10dp"
+                        android:textColor="@color/mycolor"
+                        android:textColorHint="@color/mycolor"
+                        android:layout_marginBottom="10dp"
+                        android:textScaleX="1"
+                        android:textSize="15sp"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+                <Button
+                    android:id="@+id/search_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/border_blue"
+                    android:padding="3dp"
+                    android:text="@string/search"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/createAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="@string/vide"
+                    android:textColor="@color/mycolor"
+                    android:textSize="14sp"
+                    android:paddingBottom="30dp"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_alignParentBottom="true"
+    android:layout_margin="-5dp"
+    android:gravity="center"
+    android:background="@color/colorPrimaryDark"
+    android:paddingBottom="3dp"
+    android:paddingTop="3dp">
+    <TextView
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:text="@string/copyright"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimaryDark"
+        />
+    <TextView
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:text="@string/softinovplus"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimaryDark"
+        android:id="@+id/softinovplus"
+        android:layout_marginLeft="5px"
+        />
+
+</LinearLayout>
+
+</RelativeLayout>
+
+
+
+
+

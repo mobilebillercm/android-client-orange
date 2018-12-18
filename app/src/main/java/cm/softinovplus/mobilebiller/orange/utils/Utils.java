@@ -138,6 +138,10 @@ public class Utils {
     public static final String ORANGECAMEROON                    = "orangecameroon";
     public static final String FRENCHVERSION                     = "frenchversion";
     public static final String ENGLISHVERSION                    = "englishversion";
+    public static final int READ_REQUEST_CODE                    = 200;
+
+    public static JSONArray SEARCH_RESULT_RESPONSE;
+
 
     public static final String  SERVICE_ACCESS_CLIENT_SECRET     =  "OVywGpw9AYBDMckYSnmmLUvggMSVJGLiUdDr3Dsj";
     public static final String SERVICE_ACCESS_ACCESS_TOKEN_END_POINT     = "https://mobilebiller.idea-cm.club:4445/oauth/token";

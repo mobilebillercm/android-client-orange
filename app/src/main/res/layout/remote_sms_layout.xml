@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/madeby"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:textSize="16sp"
+    android:textStyle="bold"
+    android:textColor="@color/colorPrimary"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/beneficiary"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/body"
+        android:textSize="13sp"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/imprimer_btn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:textSize="10sp"
+            android:layout_height="35dp"
+            android:layout_weight="4"
+            android:textColor="@color/mycolor"
+            android:text="@string/imprimer"
+            android:drawableLeft="@drawable/imprinante"
+            android:drawablePadding="3dp"/>
+        <ProgressBar
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/print_loader"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/partager_btn"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:textSize="10sp"
+            android:layout_height="35dp"
+            android:layout_weight="4"
+            android:textColor="@color/mycolor"
+            android:text="@string/share"
+            android:drawableLeft="@drawable/share"
+            android:drawablePadding="3dp"/>
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimaryDark" />
+</LinearLayout>

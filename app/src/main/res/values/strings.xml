@@ -96,6 +96,16 @@
     <string name="whatsapp">WathsApp</string>
     <string name="facebook">Facebook</string>
     <string name="send_via">Envoyer Par</string>
+    <string name="online_receipt">Recus en Ligne</string>
+    <string name="loading">Loading</string>
+    <string name="keyword">Mot Cle</string>
+    <string name="searching">Recherche en Cours</string>
+    <string name="search_receipt">Chercher un Recu</string>
+    <string name="key_word">Mot Cle</string>
+    <string name="from">De</string>
+    <string name="to">A</string>
+    <string name="search">Chercher</string>
+    <string name="vide" />
 
 
     <string-array name="regions">

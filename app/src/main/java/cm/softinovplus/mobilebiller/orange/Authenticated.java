@@ -160,6 +160,12 @@ public class Authenticated extends AppCompatActivity {
                     startActivity(intent);
                 }
 
+                if (menuItem.getItemId() == R.id.remote_receipt) {
+                    mDrawerLayout.closeDrawers();
+                    Intent intent = new Intent(getApplicationContext(), ListeRecuDistant.class);
+                    startActivity(intent);
+                }
+
                 /*if (menuItem.getItemId() == R.id.register) {
                     mDrawerLayout.closeDrawers();
                     Intent intent = new Intent(getApplicationContext(), Signup.class);

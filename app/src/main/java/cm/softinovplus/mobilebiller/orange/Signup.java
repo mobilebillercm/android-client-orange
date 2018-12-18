@@ -1,6 +1,7 @@
 package cm.softinovplus.mobilebiller.orange;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
@@ -19,10 +20,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.angads25.filepicker.controller.DialogSelectionListener;
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,8 +67,6 @@ public class Signup extends AppCompatActivity {
     private String selectedRegion, logo_selected_path;
     private ArrayAdapter<CharSequence> adapter;
     private ProgressBar signup_loader;
-    public static DialogProperties properties;
-    public static FilePickerDialog dialogpicker;
     private View signeupview;
 
     @Override
@@ -119,9 +114,6 @@ public class Signup extends AppCompatActivity {
         spinner_region.setAdapter(adapter);
         selectedRegion = adapter.getItem(0).toString();
         Log.e("selectedRegion", selectedRegion);
-
-        properties = new DialogProperties();
-        dialogpicker = new FilePickerDialog(Signup.this,properties);
 
         logo_selected_path = "";
     }
@@ -205,27 +197,32 @@ public class Signup extends AppCompatActivity {
         edit_logo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.e("onFocusChange", "onFocusChange " + hasFocus);
+                // Log.e("onFocusChange", "onFocusChange " + hasFocus);
                 if (hasFocus){
-                    properties.selection_mode = DialogConfigs.SINGLE_MODE;
-                    properties.selection_type = DialogConfigs.FILE_SELECT;
-                    properties.root = new File(DialogConfigs.DEFAULT_DIR);
-                    properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
-                    properties.offset = new File(DialogConfigs.DEFAULT_DIR);
-                    properties.extensions = null;
-                    dialogpicker.setTitle("Choisir un Logo");
-                    dialogpicker.setDialogSelectionListener(new DialogSelectionListener() {
-                        @Override
-                        public void onSelectedFilePaths(String[] files) {
-                            //files is the array of the paths of files selected by the Application User.
-                            logo_selected_path = files[0];
-                            String []vet = files[0].split("\\/");
-                            edit_logo.setText(vet[vet.length-1]);
-                            Log.e("FILE SELECTED", files[0]);
-                        }
-                    });
-                    dialogpicker.show();
+                    edit_logo.performClick();
                 }
+            }
+        });
+
+        edit_logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+                // browser.
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+                // Filter to only show results that can be "opened", such as a
+                // file (as opposed to a list of contacts or timezones)
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                // Filter to show only images, using the image MIME data type.
+                // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+                // To search for all documents available via installed storage providers,
+                // it would be "*/*".
+                intent.setType("image/*");
+
+                startActivityForResult(intent, Utils.READ_REQUEST_CODE);
             }
         });
     }

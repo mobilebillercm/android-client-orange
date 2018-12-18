@@ -89,6 +89,14 @@
             android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name=".CreateUser"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
+
+        <activity
+            android:name=".ListeRecuDistant"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity android:name=".SearchSMSForm"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+        <activity android:name=".SearchResult"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
     </application>
 
 </manifest>
