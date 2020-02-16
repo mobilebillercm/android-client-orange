@@ -4,12 +4,13 @@ android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
     defaultConfig {
-        applicationId "cm.softinovplus.mobilebiller.orange"
+        applicationId "cm.softinovplus.mobilebiller.mtn"
         minSdkVersion 14
         targetSdkVersion 28
         versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {

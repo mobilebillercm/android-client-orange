@@ -44,7 +44,7 @@
                             <ImageView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/menu_bar_3"
+                                android:src="@drawable/menu_bar"
                                 android:layout_weight="4"
                                 android:contentDescription="@string/app_name"
                                 android:id="@+id/menu_bar"

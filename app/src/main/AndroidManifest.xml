@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cm.softinovplus.mobilebiller.orange">
+    package="cm.softinovplus.mobilebiller.mtn">
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--<uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />-->
 
     <application
         android:allowBackup="true"
@@ -22,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Welcome"
+            android:name="cm.softinovplus.mobilebiller.mtn.Welcome"
             android:launchMode="singleTop"
             android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
@@ -32,16 +35,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Authenticated"
-            android:parentActivityName=".Welcome"
+            android:name="cm.softinovplus.mobilebiller.mtn.Authenticated"
+            android:parentActivityName="cm.softinovplus.mobilebiller.mtn.Welcome"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity
-            android:name=".BluetoothPrinterActivity"
-            android:parentActivityName=".Authenticated"
+            android:name="cm.softinovplus.mobilebiller.mtn.BluetoothPrinterActivity"
+            android:parentActivityName="cm.softinovplus.mobilebiller.mtn.Authenticated"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
 
         <receiver
-            android:name=".receivers.BootDeviceReceiver"
+            android:name="cm.softinovplus.mobilebiller.mtn.receivers.BootDeviceReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -56,46 +59,57 @@
             android:exported="true"/>
         -->
 
-        <receiver android:name=".receivers.SmsBroadcastReceiver">
+        <receiver android:name="cm.softinovplus.mobilebiller.mtn.receivers.SmsBroadcastReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".SMSsActivity"
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.SMSsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".ChangePassword"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.ChangePassword"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".InviteUser" />
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.InviteUser" />
         <activity
-            android:name=".PrintNewSMS"
-            android:parentActivityName=".Authenticated"
+            android:name="cm.softinovplus.mobilebiller.mtn.PrintNewSMS"
+            android:parentActivityName="cm.softinovplus.mobilebiller.mtn.Authenticated"
             android:configChanges="orientation|screenSize|keyboardHidden">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Authenticated" />
+                android:value="cm.softinovplus.mobilebiller.mtn.Authenticated" />
         </activity>
-        <activity android:name=".DefaulPrinterConfigActivity"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.DefaulPrinterConfigActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".RechargeAccountMenu"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.RechargeAccountMenu"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".MobileMoneyRecharge"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.MobileMoneyRecharge"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".Signup"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.Signup"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".TicketToShareActivity"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.TicketToShareActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".CreateUser"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.CreateUser"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
 
         <activity
-            android:name=".ListeRecuDistant"
+            android:name="cm.softinovplus.mobilebiller.mtn.ListeRecuDistant"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity android:name=".SearchSMSForm"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.SearchSMSForm"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name=".SearchResult"
+        <activity android:name="cm.softinovplus.mobilebiller.mtn.SearchResult"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
     </application>
 

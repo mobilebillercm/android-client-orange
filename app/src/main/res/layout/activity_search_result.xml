@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/white"
-    tools:context="cm.softinovplus.mobilebiller.orange.SearchResult">
+    tools:context="cm.softinovplus.mobilebiller.mtn.SearchResult">
 
     <LinearLayout
         android:layout_width="match_parent"
