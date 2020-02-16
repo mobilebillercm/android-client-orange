@@ -45,10 +45,10 @@ public class Welcome extends AppCompatActivity {
 
         // Apply activity transition
         // inside your activity (if you did not enable transitions in your theme)
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
 
 // set an exit transition
-        getWindow().setExitTransition(new Explode());
+        //getWindow().setExitTransition(new Explode());
 
         setContentView(R.layout.activity_welcome);
 
@@ -207,6 +207,7 @@ public class Welcome extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static class NetworkSchedulerService extends JobService implements  NetworkListener.ConnectivityReceiverListener {
 
         private  final String TAG = NetworkSchedulerService.class.getSimpleName();
