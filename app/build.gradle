@@ -4,8 +4,13 @@ android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
     defaultConfig {
+<<<<<<< HEAD
         applicationId "cm.softinovplus.mobilebiller.orange"
         minSdkVersion 19
+=======
+        applicationId "cm.softinovplus.mobilebiller.mtn"
+        minSdkVersion 14
+>>>>>>> a295d93515990e3cb75317d77e63506759a49fab
         targetSdkVersion 28
         versionCode 3
         versionName "1.0"
